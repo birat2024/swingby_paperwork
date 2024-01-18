@@ -99,7 +99,7 @@ def submit_dailysales():
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             
-            # Execute the dailysales SQL query with the form data
+            # Execute the dailysales SQL query with the form data 
             cursor.execute(dailysales_query, (
                 date,
                 name_employee, hours_employee,
@@ -114,7 +114,7 @@ def submit_dailysales():
                 over_short
             ))
 
-            # Commit the changes to the dailysales table
+            # Commit the changes to the dailysales tables
             mysql.connection.commit()
 
             # Flash a success message
