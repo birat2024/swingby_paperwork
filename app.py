@@ -17,8 +17,7 @@ from flask_login import LoginManager
 
 # Create Flask app and configure SQLAlchemy
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://root:{os.getenv('DB_CONNECTION_STRING')}@localhost/careerwebsite"
-db = SQLAlchemy(app)
+
 
 # Generate a random secret key
 secret_key = secrets.token_hex(24)
@@ -31,6 +30,7 @@ app.config['MYSQL_PASSWORD'] = os.getenv('DB_CONNECTION_STRING')  # Replace with
 app.config['MYSQL_DB'] = 'careerwebsite'
 
 mysql = MySQL(app)
+
 
 
 
