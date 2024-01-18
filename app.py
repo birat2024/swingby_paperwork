@@ -8,7 +8,6 @@ import secrets
 from flask_mysqldb import MySQL
 import bcrypt
 from wtforms.validators import DataRequired, Email, optional
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import LoginManager
 
