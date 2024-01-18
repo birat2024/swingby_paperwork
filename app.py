@@ -14,7 +14,6 @@ from flask_login import LoginManager
 
 
 
-# Create Flask app and configure SQLAlchemy
 app = Flask(__name__)
 
 
