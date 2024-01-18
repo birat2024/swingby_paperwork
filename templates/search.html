@@ -1,0 +1,33 @@
+
+{% extends 'appdesign.html' %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
+<head>
+    <title>Search Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="search-container">
+        <form action="/search" method="GET"> <!-- Update action as needed -->
+            <input type="text" placeholder="Search..." name="search">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <hr class="divider">
+    <div class="results-container">
+        <!-- Search results will be displayed here -->
+    </div>
+</body>
+</html>
+
+{% endblock %}

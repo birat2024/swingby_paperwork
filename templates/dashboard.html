@@ -1,0 +1,41 @@
+{% extends 'appdesign.html' %}
+
+{% block content %}
+
+
+
+
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Daily Sales Button -->
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('dailysales') }}" class="dashboard-button btn-outline-primary">Daily Sales</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('main_terminal') }}" class="dashboard-button btn-outline-success">Terminal</a>
+        </div>
+        <!-- Purchase Order Button -->
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('purchase_order') }}" class="dashboard-button btn-outline-success">Purchase Order</a>
+        </div>
+        <!-- Store Transfer Button -->
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('store_transfer') }}" class="dashboard-button btn-outline-info">Store Transfer</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('expenses') }}" class="dashboard-button btn-outline-info">Expenses</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('lottery_input') }}" class="dashboard-button btn-outline-info">Lottery</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('expenses') }}" class="dashboard-button btn-outline-info">Misc</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('employee') }}" class="dashboard-button btn-outline-info">Employee</a>
+        </div>
+        <!-- More buttons can be added here -->
+    </div>
+</div>
+{% endblock %}

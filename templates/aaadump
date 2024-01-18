@@ -1,0 +1,96 @@
+@app.route('/dailysales', methods=['GET', 'POST'])
+def dailysales():
+    daily_sales_form = DailySalesForm()
+    expenses_form = ExpenseForm()
+
+    if request.method == 'POST':
+        # Check which form is submitted
+        if 'submit_button' in request.form:
+            if request.form['submit_button'] == 'daily_sales' and daily_sales_form.validate():
+                try:
+                    # Handle daily sales form submission
+                    # ... (your code to process daily_sales_form and insert data into dailysales table)
+                    mysql.connection.commit()
+                    flash('Dailysales data submitted successfully!', 'success')
+                except Exception as e:
+                    mysql.connection.rollback()
+                    flash(f'An error occurred while submitting dailysales data: {e}', 'danger')
+                finally:
+                    cursor.close()
+
+            elif request.form['submit_button'] == 'expenses' and expenses_form.validate():
+                try:
+                    # Handle expenses form submission
+                    # ... (your code to process expenses_form and insert data into expenses table)
+                    mysql.connection.commit()
+                    flash('Expense data submitted successfully!', 'success')
+                except Exception as e:
+                    mysql.connection.rollback()
+                    flash(f'An error occurred while adding expense: {e}', 'danger')
+                finally:
+                    cursor.close()
+
+    return render_template('dailysales.html', daily_sales_form=daily_sales_form, expenses_form=expenses_form)
+
+
+
+
+
+{% extends 'appdesign.html' %}
+
+{% block content %}
+<div class="container mt-3">
+    <h2 class="text-center">Lottery Data Input</h2>
+    <div class="row">
+        <!-- Column for the input table -->
+        <div class="col-md-5">
+            <div class="highlight">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="w-25">SN</th>
+                                <th class="w-25">Amount</th>
+                                <th class="w-25">Begin Day</th>
+                                <th class="w-25">End Day</th>
+                                <th class="w-25">Sold</th>
+                                <th class="w-25">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- ... -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-right">Grand Total</td>
+                                <td class="grand-total">0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Column for the second table -->
+        <div class="col-md-7">
+            <div class="highlight">
+                <h3>Lottery Day</h3>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- ... -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='calculate_lottery.js') }}"></script>
+{% endblock %}

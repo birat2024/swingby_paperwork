@@ -1,0 +1,65 @@
+{% extends 'appdesign.html' %}
+
+{% block content %}
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row justify-content-between">
+        <!-- Form Box on Left Side -->
+        <div class="col-md-4">
+            <div class="highlight-box form-box">
+                <h3>Input Transfer</h3>
+                    {{ form.hidden_tag() }}
+                    <div class="container-box">
+                        {{ form.date(class="form-control", placeholder=form.date.label.text) }}
+                        {{ form.transfer_number(class="form-control", placeholder=form.transfer_number.label.text) }}
+                        {{ form.transferred_from(class="form-control", placeholder=form.transferred_from.label.text) }}
+                        {{ form.transferred_to(class="form-control", placeholder=form.transferred_to.label.text) }}
+                        {{ form.amount(class="form-control", placeholder=form.amount.label.text) }}
+                        {{ form.remark(class="form-control", placeholder=form.remark.label.text) }}
+                        <div class="mt-4">
+                            {{ form.submit(class="btn btn-outline-primary btn-lg") }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Table Box on Right Side -->
+        <div class="col-md-7">
+            <div class="highlight-box table-box">
+                <h3>Store Transfer History</h3>
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Transfer #</th>
+                            <th scope="col">Transferred From</th>
+                            <th scope="col">Transferred To</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transfer in transfers %}
+                            <tr>
+                                <td>{{ transfer[1] }}</td>
+                                <td>{{ transfer[2] }}</td>
+                                <td>{{ transfer[3] }}</td>
+                                <td>{{ transfer[4] }}</td>
+                                <td>{{ transfer[5] }}</td>
+                                <td>{{ transfer[6] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

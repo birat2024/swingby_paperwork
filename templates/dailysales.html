@@ -1,0 +1,166 @@
+{% extends 'appdesign.html' %}
+
+{% block content %}
+<div class="container">
+    <form method="post" action="{{ url_for('submit_dailysales') }}">
+        {{ form.hidden_tag() }}
+
+        <!-- Employee Details Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="highlight-box form-box">
+                    <h3>Employee Details</h3>
+                    <!-- Date Field -->
+                    <div class="form-group mb-2">
+                        {{ form.date(type="date", class="form-control", placeholder="Date") }}
+                    </div>
+
+                    <!-- Employee Name, Hours, and Checkbox on Same Row -->
+                    <div class="row form-group mb-2">
+                        <div class="col">
+                            {{ form.name_employee(class="form-control", placeholder="Employee Name") }}
+                        </div>
+                        <div class="col">
+                            {{ form.hours_employee(class="form-control", placeholder="Hours") }}
+                        </div>
+                        <div class="col-auto">
+                            <input type="checkbox" class="form-check-input" id="employeeCheckbox">
+                            <label class="form-check-label" for="employeeCheckbox">Check</label>
+                        </div>
+                    </div>
+
+                    <!-- Employee 1 Name, Hours, and Checkbox on Same Row -->
+                    <div class="row form-group mb-2">
+                        <div class="col">
+                            {{ form.name_employee1(class="form-control", placeholder="Employee 1 Name") }}
+                        </div>
+                        <div class="col">
+                            {{ form.hours_employee1(class="form-control", placeholder="Hours") }}
+                        </div>
+                        <div class="col-auto">
+                            <input type="checkbox" class="form-check-input" id="employee1Checkbox">
+                            <label class="form-check-label" for="employee1Checkbox">Check</label>
+                        </div>
+                    </div>
+
+                    <!-- Employee 2 Name, Hours, and Checkbox on Same Row -->
+                    <div class="row form-group mb-2">
+                        <div class="col">
+                            {{ form.name_employee2(class="form-control", placeholder="Employee 2 Name") }}
+                        </div>
+                        <div class="col">
+                            {{ form.hours_employee2(class="form-control", placeholder="Hours") }}
+                        </div>
+                        <div class="col-auto">
+                            <input type="checkbox" class="form-check-input" id="employee2Checkbox">
+                            <label class="form-check-label" for="employee2Checkbox">Check</label>
+                        </div>
+                                                <!-- Submit Button for the Entire Form -->
+                        <div class="text-center mt-4">
+                            {{ form.submit(class="btn btn-outline-primary btn-lg") }}      
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="col-md-6">
+                <div class="highlight-box form-box">
+                    <h3>Shift Details</h3>
+                    
+                   <!-- Row for Total Sales -->
+<div class="row form-group mb-2">
+    <div class="col">
+        {{ form.total_sales_shift1(class="form-control", placeholder="Total Sales Shift 1") }}
+    </div>
+    <div class="col">
+        {{ form.total_sales_shift2(class="form-control", placeholder="Total Sales Shift 2") }}
+    </div>
+    <div class="col">
+        {{ form.total_sales_day(class="form-control", placeholder="Total Sales Day", readonly=true) }}
+    </div>
+</div>
+
+<!-- Row for Card Total -->
+<div class="row form-group mb-2">
+    <div class="col">
+        {{ form.card_total_shift1(class="form-control", placeholder="Card Total Shift 1") }}
+    </div>
+    <div class="col">
+        {{ form.card_total_shift2(class="form-control", placeholder="Card Total Shift 2") }}
+    </div>
+    <div class="col">
+        {{ form.card_total_day(class="form-control", placeholder="Card Total Day", readonly=true) }}
+    </div>
+</div>
+
+<!-- Row for Drop Total -->
+<div class="row form-group mb-2">
+    <div class="col">
+        {{ form.drop_total_shift1(class="form-control", placeholder="Drop Total Shift 1") }}
+    </div>
+    <div class="col">
+        {{ form.drop_total_shift2(class="form-control", placeholder="Drop Total Shift 2") }}
+    </div>
+    <div class="col">
+        {{ form.drop_total_day(class="form-control", placeholder="Drop Total Day", readonly=true) }}
+    </div>
+</div>
+
+<div class="row form-group mb-2">
+    <div class="col">
+        {{ form.lotto_payout_shift1(class="form-control", placeholder="Lotto Payout Shift 1") }}
+    </div>
+    <div class="col">
+        {{ form.lotto_payout_shift2(class="form-control", placeholder="Lotto Payout Shift 2") }}
+    </div>
+    <div class="col">
+        {{ form.lotto_payout_day(class="form-control", placeholder="Lotto Payout Day", readonly=true) }}
+    </div>
+</div>
+
+<div class="row form-group mb-2">
+    <div class="col">
+        {{ form.payout1_shift1(class="form-control", placeholder="Payout Shift 1") }}
+    </div>
+    <div class="col">
+        {{ form.payout1_shift2(class="form-control", placeholder="Payout Shift 2") }}
+    </div>
+    <div class="col">
+        {{ form.payout1_day(class="form-control", placeholder="Payout Day", readonly=true) }}
+    </div>
+</div>
+
+<div class="row form-group mb-2">
+    <div class="col">
+        {{ form.payout2_shift1(class="form-control", placeholder="Payout Total Shift 1") }}
+    </div>
+    <div class="col">
+        {{ form.payout2_shift2(class="form-control", placeholder="Payout Total Shift 2") }}
+    </div>
+    <div class="col">
+        {{ form.payout2_day(class="form-control", placeholder="Payout Total Day", readonly=true) }}
+    </div>
+</div>
+
+<!-- Row for Over/Short -->
+<div class="row form-group mb-2">
+    <div class="col">
+        {{ form.over_short(class="form-control", placeholder="Over/Short") }}
+    </div>
+</div>
+
+
+</form>
+
+
+    
+</div>
+</div>
+
+
+<!-- Link to JavaScript file -->
+<script src="{{ url_for('static', filename='calculate_dailysales.js') }}"></script>
+
+{% endblock %}
+

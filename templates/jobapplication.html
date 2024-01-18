@@ -1,0 +1,46 @@
+{% extends 'appdesign.html' %}
+
+{% block content %}
+    <h1>Application Form</h1>
+    <form class="row g-3" method="POST" action="{{ url_for('jobapplication') }}">
+        {{ form.hidden_tag() }}
+
+        <div class="col-md-6">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+            {% if form.name.errors %}
+                <!-- Display errors for name -->
+            {% endif %}
+        </div>
+
+        <div class="col-md-6">
+            {{ form.education.label(class="form-label") }}
+            {{ form.education(class="form-control") }}
+            {% if form.education.errors %}
+                <!-- Display errors for education -->
+            {% endif %}
+        </div>
+
+        <div class="col-12">
+            {{ form.experience.label(class="form-label") }}
+            {{ form.experience(class="form-control") }}
+            {% if form.experience.errors %}
+                <!-- Display errors for experience -->
+            {% endif %}
+        </div>
+
+        <div class="col-12">
+            {{ form.reference.label(class="form-label") }}
+            {{ form.reference(class="form-control") }}
+            {% if form.reference.errors %}
+                <!-- Display errors for reference -->
+            {% endif %}
+        </div>
+
+        <!-- Add additional fields as needed -->
+
+        <div class="col-12">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+{% endblock %}

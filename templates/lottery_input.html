@@ -1,0 +1,122 @@
+{% extends 'appdesign.html' %}
+
+{% block content %}
+<div class="content"
+<div class="container mt-3">
+    <h2 class="text-center">Lottery Data Input</h2>
+    <div class="row">
+        <!-- Column for the input table -->
+        <div class="col-md-5">
+            <div class="highlight">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="w-25">SN</th>
+                                <th class="w-25">Amount</th>
+                                <th class="w-25">Begin Day</th>
+                                <th class="w-25">End Day</th>
+                                <th class="w-25">Sold</th>
+                                <th class="w-25">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tbody>
+                                {% for sn in range(1, 41) %}
+                                <tr>
+                                    <td>{{ sn }}</td>
+                                    <td><input type="number" class="form-control amount" placeholder="Amount"></td>
+                                    <td><input type="number" class="form-control begin-day" placeholder="Begin Day"></td>
+                                    <td><input type="number" class="form-control end-day" placeholder="End Day"></td>
+                                    <td class="sold">0</td> <!-- Sold will be calculated -->
+                                    <td class="total">0</td> <!-- Total will be calculated -->
+                                </tr>
+                                {% endfor %}
+                            </tbody>                        </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" class="text-right">Grand Total</td>
+                                    <td class="grand-total">0</td>
+                                </tr>
+                                <tr>
+                                    <!-- colspan attribute should match the number of columns in your table -->
+                                    <td colspan="6" class="text-center">
+                                        <button id="add-row" class="btn btn-primary">Add Row</button>
+                                        <button id="remove-row" class="btn btn-danger">Remove Row</button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                            
+                    </table>
+                </div>
+            </div>
+        </div>
+
+<!-- This div will create the gap in the middle -->
+        <div class="col-md-2"></div> 
+
+        <!-- Right Table -->
+    <div class="col-md-5">
+    <div class="highlight">
+        <h3>Lottery Day</h3>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total POS</td>
+                        <td><input type="number" class="form-control" id="total-pos"></td>
+                    </tr>
+                    <tr>
+                        <td>Scratch Off</td>
+                        <td><input type="number" class="form-control" id="scratch-off"></td>
+                    </tr>
+                    <tr>
+                        <td>Lotto Online</td>
+                        <td><input type="number" class="form-control" id="lotto-online"></td>
+                    </tr>
+                    <tr>
+                        <td>Payout Total</td>
+                        <td><input type="number" class="form-control" id="payout-total"></td>
+                    </tr>
+                    <tr>
+                        <td>Total (POS - Scratch Off - Lotto Online)</td>
+                        <td id="calculated-total">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="highlight p-3">
+            <h3>Lotto, Payout, and Commissions</h3>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Lotto Online</td>
+                        <td><input type="number" class="form-control" id="lotto-online"></td>
+                    </tr>
+                    <tr>
+                        <td>Payout Total</td>
+                        <td><input type="number" class="form-control" id="payout-total"></td>
+                    </tr>
+                    <tr>
+                        <td>Commissions</td>
+                        <td><input type="number" class="form-control" id="commissions"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="{{ url_for('static', filename='calculate_lottery.js') }}"></script>
+{% endblock %}
