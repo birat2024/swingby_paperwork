@@ -1,8 +1,110 @@
+
 {% extends 'appdesign.html' %}
 
 {% block content %}
-<div class="container mt-3">
-    <h2>Welcome Employee!</h2>
-    <!-- Add more content here as needed -->
+<body>
+
+     <!-- "Welcome" box with employee's name -->
+     <div class="highlight-box welcome-box">
+        <h1>Welcome, John Doe!</h1>
+        <button class="update-button" id="updateInfoButton">Update Info</button>
+    </div>
+    
+        <!-- Form for updating employee information (initially hidden) -->
+        <div id="updateInfoForm" style="display: none;">
+            <h3>Update Your Information</h3>
+            <form>
+                <!-- Form fields for updating information -->
+                <!-- Add your form fields here -->
+                <br>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+
+  <!-- Section 2: Work Schedule and Hours Worked -->
+<div class="row">
+    <!-- Section 2: Work Schedule -->
+    <div class="col-md-4">
+        <h2>2. Work Schedule</h2>
+        <table class="table">
+            <tr>
+                <th>Day</th>
+                <th>Shift</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+            </tr>
+            <tr>
+                <td>Monday</td>
+                <td>Morning</td>
+                <td>8:00 AM</td>
+                <td>12:00 PM</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Section 3: Hours Worked -->
+    <div class="col-md-4">
+        <h2>3. Hours Worked</h2>
+        <table class="table">
+            <tr>
+                <th>Week</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Total Hours</th>
+            </tr>
+            <tr>
+                <td>Week 1</td>
+                <td>Jan 1, 2024</td>
+                <td>Jan 7, 2024</td>
+                <td>40 hours</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Section 4: Payroll Information -->
+    <div class="col-md-4">
+        <h2>4. Payroll Information</h2>
+        <table class="table">
+            <tr>
+                <th>Hourly Wage</th>
+                <td>$15.00</td>
+            </tr>
+            <tr>
+                <th>Overtime Pay</th>
+                <td>$22.50</td>
+            </tr>
+            <tr>
+                <th>Bonuses</th>
+                <td>$100.00</td>
+            </tr>
+            <tr>
+                <th>Total Earnings</th>
+                <td>$1,000.00</td>
+            </tr>
+        </table>
+    </div>
 </div>
+
+
+    <!-- Add links to other sections (7, 8, 9, 10, 11) as needed -->
+
+    <p>Additional Sections:</p>
+    <ul>
+        <li><a href="#">Benefits</a></li>
+        <li><a href="#">Timekeeping</a></li>
+        <li><a href="#">Announcements and News</a></li>
+        <li><a href="#">Documents and Forms</a></li>
+        <li><a href="#">Contact Information</a></li>
+    </ul>
+
+    <p>Other Features:</p>
+    <ul>
+        <li><a href="#">Employee Directory</a></li>
+        <li><a href="#">Training and Resources</a></li>
+        <li><a href="#">Performance Metrics</a></li>
+    </ul>
+
+    <!-- You can add more content and links here as needed -->
+
+</body>
 {% endblock %}
