@@ -491,7 +491,7 @@ def get_purchases_by_vendor(selected_month, selected_year):
     vendor_purchases_list = [
         {
             'vendor_name': vendor,
-            'total_purchase': f'${totals['total_purchase']:.2f}',
+            'total_purchase': f"${totals['total_purchase']:.2f}",
             **{pt: f'${totals[pt]:.2f}' for pt in purchase_types}  # Include each payment type's total
         } for vendor, totals in vendor_purchases.items()
     ]
