@@ -1,456 +1,423 @@
-import datetime
-from flask import Flask, render_template, flash, redirect, request, url_for, session
-from flask_login import login_required
-from flask_wtf import FlaskForm
-from wtforms import DateField, DecimalField, FloatField, Form, SelectField, SubmitField, StringField, PasswordField, TextAreaField, validators
-import os
-import secrets
-from flask_mysqldb import MySQL
-import bcrypt
-from wtforms.validators import DataRequired, Email, optional
+from calendar import month_name
+import calendar
 from datetime import datetime
-from flask_login import LoginManager
+from functools import wraps
+import locale
+import secrets
+import bcrypt
+from flask import Flask, g, render_template, request, flash, redirect, session, url_for
+from flask_login import LoginManager, UserMixin, current_user, login_user, login_required, logout_user
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Engine, desc, extract, func, create_engine
+from sqlalchemy.exc import SQLAlchemyError  
+from decimal import Decimal 
+from sqlalchemy.orm import sessionmaker
 
 
+import os
+from dotenv import load_dotenv
+from flask_wtf import CSRFProtect
 
-
+from models import Expense, Role, StoreTransfer, Users, DailySales, PurchaseOrder
+from database import db
+from constants import expense_types, purchase_types, from_transfer_types, to_transfer_types, OWNER, MANAGER, EMPLOYEE, store_names
 app = Flask(__name__)
 
+# Load environment variables from the .env file
+load_dotenv()
+
+# Configure SQLAlchemy with the loaded database URI and SSL certificate path
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'connect_args': {
+        'ssl': {
+            'ssl_ca': os.getenv('SSL_CERTIFICATE')
+        }
+    }
+}
+
+# Initialize the SQLAlchemy object
+db.init_app(app)
+
+# Create the SQLAlchemy engine (move this within the application context)
+with app.app_context():
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    Session = sessionmaker(bind=engine)
 
 # Generate a random secret key
 secret_key = secrets.token_hex(24)
 app.secret_key = secret_key
 
-# MySQL Config (you can keep this if needed)
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = os.getenv('DB_CONNECTION_STRING')  # Replace with your MySQL password
-app.config['MYSQL_DB'] = 'careerwebsite'
 
-mysql = MySQL(app)
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.login_view = 'login'
+login_manager.init_app(app)
 
-
-
-
-@app.route('/lottery_input')
-def lottery_input():
-    # You can add logic here to pass necessary data to your template
-    # For example, if you have lottery data to display, you can fetch it and pass it to the template:
-    # lottery_data = fetch_lottery_data()  # This is just a placeholder for your data fetching logic.
-    
-    return render_template('lottery_input.html')  # Assuming you have a template named 'lottery_input.html'
+class User(UserMixin):
+    def __init__(self, user_id, user_role):
+        self.id = user_id
+        self.user_role = user_role
 
 
-
-
-
-
-
-@app.route('/submit_dailysales', methods=['POST'])
-def submit_dailysales():
-    form = DailySalesForm()
-    if form.validate_on_submit():
-        try:
-            # Extract data from form
-            date = form.date.data
-            name_employee = form.name_employee.data
-            hours_employee = form.hours_employee.data
-            name_employee1 = form.name_employee1.data
-            hours_employee1 = form.hours_employee1.data
-            name_employee2 = form.name_employee2.data
-            hours_employee2 = form.hours_employee2.data
-            total_sales_shift1 = form.total_sales_shift1.data
-            total_sales_shift2 = form.total_sales_shift2.data
-            total_sales_day = form.total_sales_day.data
-            card_total_shift1 = form.card_total_shift1.data
-            card_total_shift2 = form.card_total_shift2.data
-            card_total_day = form.card_total_day.data
-            drop_total_shift1 = form.drop_total_shift1.data
-            drop_total_shift2 = form.drop_total_shift2.data
-            drop_total_day = form.drop_total_day.data
-            lotto_payout_shift1 = form.lotto_payout_shift1.data
-            lotto_payout_shift2 = form.lotto_payout_shift2.data
-            lotto_payout_day = form.lotto_payout_day.data
-            payout1_shift1 = form.payout1_shift1.data
-            payout1_shift2 = form.payout1_shift2.data
-            payout1_day = form.payout1_day.data
-            payout2_shift1 = form.payout2_shift1.data
-            payout2_shift2 = form.payout2_shift2.data
-            payout2_day = form.payout2_day.data
-            over_short = form.over_short.data
-
-            # Connect to the database
-            cursor = mysql.connection.cursor()
-
-            # SQL query to insert data into the dailysales table
-            dailysales_query = """
-                INSERT INTO dailysales (
-                    date,
-                    name_employee, hours_employee,
-                    name_employee1, hours_employee1,
-                    name_employee2, hours_employee2,
-                    total_sales_shift1, total_sales_shift2, total_sales_day,
-                    card_total_shift1, card_total_shift2, card_total_day,
-                    drop_total_shift1, drop_total_shift2, drop_total_day,
-                    lotto_payout_shift1, lotto_payout_shift2, lotto_payout_day,
-                    payout1_shift1, payout1_shift2, payout1_day,
-                    payout2_shift1, payout2_shift2, payout2_day,
-                    over_short
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            
-            # Execute the dailysales SQL query with the form data 
-            cursor.execute(dailysales_query, (
-                date,
-                name_employee, hours_employee,
-                name_employee1, hours_employee1,
-                name_employee2, hours_employee2,
-                total_sales_shift1, total_sales_shift2, total_sales_day,
-                card_total_shift1, card_total_shift2, card_total_day,
-                drop_total_shift1, drop_total_shift2, drop_total_day,
-                lotto_payout_shift1, lotto_payout_shift2, lotto_payout_day,
-                payout1_shift1, payout1_shift2, payout1_day,
-                payout2_shift1, payout2_shift2, payout2_day,
-                over_short
-            ))
-
-            # Commit the changes to the dailysales tables
-            mysql.connection.commit()
-
-            # Flash a success message
-            flash('Dailysales data submitted successfully!', 'success')
-        except Exception as e:
-            # Rollback transaction on error
-            mysql.connection.rollback()
-            # Flash error message
-            flash(f'An error occurred while submitting dailysales data: {e}', 'danger')
-        finally:
-            # Close the cursor
-            cursor.close()
-
-    # Redirect to the dailysales form page
-    return redirect(url_for('dailysales'))
-
-@app.route('/dailysales', methods=['GET', 'POST'])
-def dailysales():
-    form = DailySalesForm()
-
-    
-    return render_template('dailysales.html', form=form)
-
-
-class DailySalesForm(FlaskForm):
-    # Date 
-    date = StringField('date', validators=[DataRequired()])
-
-    # Fields for Employees
-    name_employee = StringField('Employee Name', validators=[DataRequired()])
-    hours_employee = FloatField('Employee Hours', validators=[DataRequired()])
-    name_employee1 = StringField('Employee 1 Name', validators=[optional()])
-    hours_employee1 = FloatField('Employee 1 Hours',validators=[optional()])
-    name_employee2 = StringField('Employee 2 Name', validators=[optional()])
-    hours_employee2 = FloatField('Employee 2 Hours', validators=[optional()])
-
-    total_sales_shift1 = FloatField('Total Sales Shift 1', validators=[DataRequired()])
-    total_sales_shift2 = FloatField('Total Sales Shift 2', validators=[optional()])
-    total_sales_day = FloatField('Total Sales Day', validators=[DataRequired()])
-    
-    card_total_shift1 = FloatField('Card Total Shift 1', validators=[DataRequired()])
-    card_total_shift2 = FloatField('Card Total Shift 2', validators=[optional()])
-    card_total_day = FloatField('Card Total Day', validators=[DataRequired()])
-
-    drop_total_shift1 = FloatField('Drop Total Shift 1', validators=[DataRequired()])
-    drop_total_shift2 = FloatField('Drop Total Shift 2', validators=[optional()])
-    drop_total_day = FloatField('Drop Total Day', validators=[DataRequired()])
-
-    lotto_payout_shift1 = FloatField('Lotto Payout Shift 1', validators=[optional()])
-    lotto_payout_shift2 = FloatField('Lotto Payout Shift 2', validators=[optional()])
-    lotto_payout_day = FloatField('Lotto Payout Day', validators=[optional()])
-
-    payout1_shift1 = FloatField('Payout 1 Shift 1', validators=[optional()])
-    payout1_shift2 = FloatField('Payout 1 Shift 2',validators=[optional()])
-    payout1_day = FloatField('Payout 1 Day', validators=[optional()])
-
-    payout2_shift1 = FloatField('Payout 2 Shift 1', validators=[optional()])
-    payout2_shift2 = FloatField('Payout 2 Shift 2', validators=[optional()])
-    payout2_day = FloatField('Payout 2 Day', validators=[optional()])
-
-    over_short = FloatField('Over/Short')
-
-    submit = SubmitField('Submit')
-
-class ExpenseForm(FlaskForm):
-    expense_date = DateField('Date', validators=[DataRequired()])
-    expense_type = StringField('Expense Type', validators=[DataRequired()])
-    expense_description = TextAreaField('Description', validators=[DataRequired()])
-    expense_amount = DecimalField('Amount', validators=[DataRequired()])
-    expense_pay_type = SelectField('Payment Type', choices=[('cash', 'Cash'), ('credit', 'Credit Card')], validators=[DataRequired()])
-
-@app.route('/expenses', methods=['GET', 'POST'])
-def expenses():
-    form = ExpenseForm()
-    if form.validate_on_submit():
-        # Extract data from the form and insert it into the database
-        expense_date = form.expense_date.data
-        expense_type = form.expense_type.data
-        expense_description = form.expense_description.data
-        expense_amount = form.expense_amount.data
-        expense_pay_type = form.expense_pay_type.data
-
-        # Insert data into the database (assuming you have a MySQL database connection)
-        cursor = mysql.connection.cursor()
-        cursor.execute("""
-            INSERT INTO expenses (expense_date, expense_type, expense_description, expense_amount, expense_pay_type)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (expense_date, expense_type, expense_description, expense_amount, expense_pay_type))
-        mysql.connection.commit()
-        cursor.close()
-        
-        flash("Expense added successfully.", "success")
-        return redirect(url_for('expenses'))  # Redirect to the same page after submission
-
-    # Retrieve existing expenses from the database
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM expenses")
-    expenses = cursor.fetchall()
-    cursor.close()
-
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM expenses ORDER BY expense_date DESC LIMIT 100")  # Adjust the 'ORDER BY' clause as needed
-    orders = cursor.fetchall()
-    cursor.close()
-
-    return render_template('expenses.html', form=form, expenses=expenses)
-
-
-
-
-
-
-@app.route('/search')
-def search():
-    return render_template('search.html')
-
-
-
-## GOOD TILL HERE##
-@app.route('/dashboard')
-def dashboard():
-    # Make sure the user is logged in
-    if not is_logged_in():
-        flash('Please log in to access the dashboard', 'warning')
+# Custom decorator to restrict access to owners
+def owner_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_email' in session:
+            user = Users.query.filter_by(email=session['user_email']).first()
+            if user and user.user_role == 'Owner':
+                return f(*args, **kwargs)
         return redirect(url_for('login'))
-    else:
-    # Your dashboard code here
-     return render_template('dashboard.html')
+    return decorated_function
+
+# Custom decorator to restrict access to managers
+def manager_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_email' in session:
+            user = Users.query.filter_by(email=session['user_email']).first()
+            if user and user.user_role == 'Manager':
+                return f(*args, **kwargs)
+        return redirect(url_for('login'))
+    return decorated_function
+
+# Custom decorator to restrict access to employees
+def employee_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_email' in session:
+            user = Users.query.filter_by(email=session['user_email']).first()
+            if user and user.user_role == 'Employee':
+                return f(*args, **kwargs)
+        return redirect(url_for('login'))
+    return decorated_function
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        selected_role = request.form.get('role')
+
+        # Check if the user already exists in the database
+        existing_user = Users.query.filter_by(email=email).first()
+        if existing_user:
+            flash('Email address is already in use. Please use a different email.', 'danger')
+            return redirect(url_for('signup'))
+
+        # Hash the password before storing it in the database (assuming you have bcrypt set up)
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+        # Create the new user with the assigned role
+        new_user = Users(name=name, email=email, password=hashed_password, user_role=selected_role)
+
+        # Add the user to the database and commit the transaction
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash('User registration successful!', 'success')
+        return redirect(url_for('login'))
+
+    roles = [EMPLOYEE, MANAGER, OWNER]  # List of available roles
+    return render_template('signup.html', roles=roles)  # Pass roles to the template
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Query the user from the database based on user_id
+    user = Users.query.get(int(user_id))
+    if user:
+        return User(user.id, user.user_role)
+    return None
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Query the user from the database using the provided email
+        user = Users.query.filter_by(email=email).first()
+
+        if user:
+            # Check if the provided password matches the hashed password in the database
+            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                session['user_email'] = user.email  # Store the user's email in the session
+                
+                # Convert user's role from string to integer
+                if user.user_role == 'Owner':
+                    session['user_role'] = OWNER
+                elif user.user_role == 'Manager':
+                    session['user_role'] = MANAGER
+                else:
+                    session['user_role'] = EMPLOYEE
+
+                flash('Login successful!', 'success')
+                return redirect(url_for('dashboard'))  # Redirect to dashboard upon successful login
+
+            else:
+                flash('Login failed. Please check your credentials.', 'danger')
+        else:
+            flash('User not found. Please check your credentials.', 'danger')
+
+    return render_template('login.html')
+
+def is_logged_in():
+    return 'user_id' in session
+
+@app.context_processor
+def utility_processor():
+    def is_logged_in():
+        return 'user_email' in session  # Check if user_email is in the session
+    return dict(is_logged_in=is_logged_in)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('Logged out successfully.', 'success')
+    return redirect(url_for('login'))
+
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# AUTHENTICATION #
-class SignupForm(FlaskForm):
-    name = StringField("Name", validators=[validators.DataRequired()])
-    email = StringField("Email", validators=[validators.DataRequired(), validators.Email()])
-    password = PasswordField("Password", validators=[validators.DataRequired()])
-    submit = SubmitField("Signup")
-
-class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Login')
-
-# Helper function to check login status
-def is_logged_in():
-    return 'user_id' in session
-
-@app.context_processor
-def context_processor():
-    return dict(is_logged_in=is_logged_in)
-
-def get_user_email_from_session():
-    # Check if the 'user_id' key exists in the session
-    if 'user_id' in session:
-        # You can retrieve the user's email from your session data
-        user_id = session['user_id']
-        # Query your database to get the user's email based on the user_id
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT email FROM users WHERE id = %s", (user_id,))
-        user_email = cursor.fetchone()
-        cursor.close()
-        # Return the user's email
-        if user_email:
-            return user_email[0]
-    return None
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    form = SignupForm()
-
-    if form.validate_on_submit():
-        name = form.name.data
-        email = form.email.data
-        password = form.password.data
-
-        # Hash the password before storing it in the database
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
-        # Check if the user already exists in the database
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
-        user = cursor.fetchone()
-        if user:
-            flash('Email address is already in use. Please use a different email.', 'danger')
-        else:
-            # Insert the user data into the database
-            cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
-            mysql.connection.commit()
-            cursor.close()
-
-            flash('Registration successful!', 'success')
-            return redirect(url_for('login'))
-
-    return render_template('signup.html', form=form)
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-
-    if form.validate_on_submit():
-        email = form.email.data
-        password = form.password.data
-
-        # Retrieve the user's data from the database
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT id, password FROM users WHERE email = %s", (email,))
-        user_data = cursor.fetchone()
-        cursor.close()
-
-        if user_data:
-            user_id, stored_hashed_password = user_data
-
-            # Check if the provided password matches the stored hashed password
-            if bcrypt.checkpw(password.encode('utf-8'), stored_hashed_password.encode('utf-8')):
-                # Passwords match, user is authenticated
-
-                # Store the user ID in the session
-                session['user_id'] = user_id
-
-                # Redirect to the 'index' route upon successful login
-                return redirect(url_for('dashboard'))
-
-        flash('Invalid email or password. Please try again.', 'danger')
-
-    return render_template('login.html', form=form)
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    flash('You have been logged out.', 'success')
-    return redirect(url_for('login'))
+# Dashboard route accessible to both managers and employees
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html', current_user=current_user)
 
 
-class StoreTransferForm(FlaskForm):
-    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
-    transfer_number = StringField('Transfer #', validators=[DataRequired()])
-    transferred_from = StringField('Transferred From', validators=[DataRequired()])
-    transferred_to = StringField('Transferred To', validators=[DataRequired()])
-    amount = DecimalField('Amount', validators=[DataRequired()])
-    remark = TextAreaField('Remark')
-    submit = SubmitField('Submit')
+@app.route('/dailysales', methods=['GET'])
+def dailysales():
+    # Retrieve the daily sales data from the database
+    daily_sales_data = DailySales.query.all()  # You may need to adjust this query based on your needs
+
+    return render_template('dailysales.html', daily_sales_data=daily_sales_data)
+
+@app.route('/dailysales', methods=['GET', 'POST'])
+def dailysales_submit():
+    if request.method == 'POST':
+        try:
+            # Utility function to convert input data or use default value
+            def validate_or_default(value, default, data_type):
+                try:
+                    return data_type(value) if value else default
+                except ValueError:
+                    return default
+            
+            
+            overwrite = request.form.get('overwrite') == 'on'
+
+            # Retrieve and validate form data
+            date = request.form.get('date')
+            name_employee = request.form.get('name_employee')
+            hours_employee = validate_or_default(request.form.get('hours_employee'), None, float)
+            name_employee1 = request.form.get('name_employee1')
+            hours_employee1 = validate_or_default(request.form.get('hours_employee1'), None, float)
+            name_employee2 = request.form.get('name_employee2')
+            hours_employee2 = validate_or_default(request.form.get('hours_employee2'), None, float)
+            total_sales_shift1 = validate_or_default(request.form.get('total_sales_shift1'), None, float)
+            total_sales_shift2 = validate_or_default(request.form.get('total_sales_shift2'), None, float)
+            card_total_shift1 = validate_or_default(request.form.get('card_total_shift1'), None, float)
+            card_total_shift2 = validate_or_default(request.form.get('card_total_shift2'), None, float)
+            drop_total_shift1 = validate_or_default(request.form.get('drop_total_shift1'), None, float)
+            drop_total_shift2 = validate_or_default(request.form.get('drop_total_shift2'), None, float)
+            lotto_payout_shift1 = validate_or_default(request.form.get('lotto_payout_shift1'), None, float)
+            lotto_payout_shift2 = validate_or_default(request.form.get('lotto_payout_shift2'), None, float)
+            payout1_shift1 = validate_or_default(request.form.get('payout1_shift1'), None, float)
+            payout1_shift2 = validate_or_default(request.form.get('payout1_shift2'), None, float)
+            payout2_shift1 = validate_or_default(request.form.get('payout2_shift1'), None, float)
+            payout2_shift2 = validate_or_default(request.form.get('payout2_shift2'), None, float)
+            total_sales_day = validate_or_default(request.form.get('total_sales_day'), None, float)
+            card_total_day = validate_or_default(request.form.get('card_total_day'), None, float)
+            drop_total_day = validate_or_default(request.form.get('drop_total_day'), None, float)
+            lotto_payout_day = validate_or_default(request.form.get('lotto_payout_day'), None, float)
+            payout1_day = validate_or_default(request.form.get('payout1_day'), None, float)
+            payout2_day = validate_or_default(request.form.get('payout2_day'), None, float)
+
+            over_short = validate_or_default(request.form.get('over_short'), None, float)
+
+            # Check if entry for the same date already exists
+            existing_entry = DailySales.query.filter_by(date=date).first()
+
+            if existing_entry and not overwrite:
+                # If an entry for the same date exists and overwrite is not checked, warn the user
+                flash('An entry for this date already exists. Check the overwrite box if you want to overwrite it.', 'warning')
+                return redirect(url_for('dailysales'))
+
+            if existing_entry and overwrite:
+                # Overwrite the existing entry
+                existing_entry.name_employee = name_employee
+                existing_entry.hours_employee = hours_employee
+                existing_entry.name_employee1=name_employee1,
+                existing_entry.hours_employee1=hours_employee1,
+                existing_entry.name_employee2=name_employee2,
+                existing_entry.hours_employee2=hours_employee2,
+                existing_entry.total_sales_shift1=total_sales_shift1,
+                existing_entry.total_sales_shift2=total_sales_shift2,
+                existing_entry.card_total_shift1=card_total_shift1,
+                existing_entry.card_total_shift2=card_total_shift2,
+                existing_entry.drop_total_shift1=drop_total_shift1,
+                existing_entry.drop_total_shift2=drop_total_shift2,
+                existing_entry.lotto_payout_shift1=lotto_payout_shift1,
+                existing_entry.lotto_payout_shift2=lotto_payout_shift2,
+                existing_entry.payout1_shift1=payout1_shift1,
+                existing_entry.payout1_shift2=payout1_shift2,
+                existing_entry.payout2_shift1=payout2_shift1,
+                existing_entry.payout2_shift2=payout2_shift2,
+                existing_entry.total_sales_day = total_sales_day,
+                existing_entry.card_total_day = card_total_day,
+                existing_entry.drop_total_day = drop_total_day,
+                existing_entry.lotto_payout_day = lotto_payout_day,
+                existing_entry.payout1_day = payout1_day,
+                existing_entry.payout2_day = payout2_day,
+                existing_entry.over_short=over_short               
+                db.session.commit()
+                flash('Entry for this date was successfully overwritten.', 'success')
+            else:
+                daily_sales_entry = DailySales(
+                    date=date,
+                    name_employee=name_employee,
+                    hours_employee=hours_employee,
+                    name_employee1=name_employee1,
+                    hours_employee1=hours_employee1,
+                    name_employee2=name_employee2,
+                    hours_employee2=hours_employee2,
+                    total_sales_shift1=total_sales_shift1,
+                    total_sales_shift2=total_sales_shift2,
+                    card_total_shift1=card_total_shift1,
+                    card_total_shift2=card_total_shift2,
+                    drop_total_shift1=drop_total_shift1,
+                    drop_total_shift2=drop_total_shift2,
+                    lotto_payout_shift1=lotto_payout_shift1,
+                    lotto_payout_shift2=lotto_payout_shift2,
+                    payout1_shift1=payout1_shift1,
+                    payout1_shift2=payout1_shift2,
+                    payout2_shift1=payout2_shift1,
+                    payout2_shift2=payout2_shift2,
+                    total_sales_day=total_sales_day,
+                    card_total_day=card_total_day,
+                    drop_total_day=drop_total_day,
+                    lotto_payout_day=lotto_payout_day,
+                    payout1_day=payout1_day,
+                    payout2_day=payout2_day,
+                    over_short=over_short
+                )   
+                db.session.add(daily_sales_entry)
+                db.session.commit()
+                flash('New entry was successfully added.', 'success')
+
+        except SQLAlchemyError as e:
+            # Handle database errors
+            db.session.rollback()
+            print(f"Database error: {e}")
+            flash('There was an error processing your request.', 'error')
+
+        # Redirect back to the dailysales page after processing
+        return redirect(url_for('dailysales'))
+
 
 @app.route('/store_transfer', methods=['GET', 'POST'])
 def store_transfer():
-    form = StoreTransferForm()
-    if form.validate_on_submit():
-        # Extract data from form
-        date = form.date.data
-        transfer_number = form.transfer_number.data
-        transferred_from = form.transferred_from.data
-        transferred_to = form.transferred_to.data
-        amount = form.amount.data
-        remark = form.remark.data
+    if request.method == 'POST':
+        date = request.form.get('date')
+        transfer_number = request.form.get('transfer_number')
+        transferred_from = request.form.get('transferred_from')
+        transferred_to = request.form.get('transferred_to')
+        amount = request.form.get('amount')
+        remark = request.form.get('remark')
 
-        # Insert data into database
-        cursor = mysql.connection.cursor()
-        cursor.execute("""
-            INSERT INTO store_transfer (date, transfer_number, transferred_from, transferred_to, amount, remark)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (date, transfer_number, transferred_from, transferred_to, amount, remark))
-        mysql.connection.commit()
-        cursor.close()
+        # Create a new StoreTransfer instance and add it to the database
+        store_transfer = StoreTransfer(date=date, transfer_number=transfer_number, transferred_from=transferred_from, transferred_to=transferred_to, amount=amount, remark=remark)
+        db.session.add(store_transfer)
+        db.session.commit()
         flash("Store Transfer added successfully.", "success")
-        return redirect(url_for('store_transfer'))
 
     # Retrieve existing transfers from the database
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM store_transfer ORDER BY date DESC")
-    transfers = cursor.fetchall()
-    cursor.close()
+    transfers = StoreTransfer.query.order_by(StoreTransfer.date.desc()).all()
 
-    return render_template('store_transfer.html', form=form, transfers=transfers)
+    return render_template(
+        'store_transfer.html', 
+        transfers=transfers, 
+        from_transfer_types=from_transfer_types, 
+        to_transfer_types=to_transfer_types,
+        store_names=store_names  # Pass store_names to the template
+    )
 
 
-class PurchaseOrderForm(FlaskForm):
-    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
-    po_number = StringField('PO#', validators=[DataRequired()])
-    vendor_name = StringField('Vendor Name', validators=[DataRequired()])
-    invoice_total = FloatField('Invoice Total', validators=[DataRequired()])
-    payment_method = SelectField('Payment Method', choices=[('Cash', 'Cash'), ('Credit', 'Credit'), ('Other', 'Other')], validators=[DataRequired()])
-    received_by = StringField('Received By', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+
+# Define the expenses function for handling the /expenses route
+@app.route('/expenses', methods=['GET', 'POST'])
+def expenses():
+    if request.method == 'POST':
+        expense_date = request.form.get('expense_date')
+        expense_type = request.form.get('expense_type')
+        expense_description = request.form.get('expense_description')
+        expense_amount = request.form.get('expense_amount')
+        expense_pay_type = request.form.get('expense_pay_type')
+
+        # Check if the expense_type is in the allowed expense types
+        if expense_type not in expense_types:
+            flash("Invalid expense type.", "error")
+            return redirect(url_for('expenses'))
+
+        new_expense = Expense(
+            expense_date=expense_date,
+            expense_type=expense_type,
+            expense_description=expense_description,
+            expense_amount=expense_amount,
+            expense_pay_type=expense_pay_type
+        )
+
+        db.session.add(new_expense)
+        db.session.commit()
+
+        flash("Expense added successfully.", "success")
+        return redirect(url_for('expenses'))
+
+    expenses = Expense.query.order_by(desc(Expense.expense_date)).limit(100).all()
+
+    return render_template('expenses.html', expenses=expenses, expense_types=expense_types)
 
 @app.route('/purchase_order', methods=['GET', 'POST'])
 def purchase_order():
-    form = PurchaseOrderForm()
-    if form.validate_on_submit():
-        date = form.date.data
-        po_number = form.po_number.data
-        vendor_name = form.vendor_name.data
-        invoice_total = form.invoice_total.data
-        payment_method = form.payment_method.data
-        received_by = form.received_by.data
+    if request.method == 'POST':
+        date = request.form.get('date')
+        po_number = request.form.get('po_number')
+        vendor_name = request.form.get('vendor_name')
+        invoice_total = request.form.get('invoice_total')
+        payment_method = request.form.get('payment_method')
+        received_by = request.form.get('received_by')
 
-        # Database Insertion
-        cursor = mysql.connection.cursor()
-        cursor.execute("INSERT INTO purchase_order (date, po_number, vendor_name, invoice_total, payment_method, received_by) VALUES (%s, %s, %s, %s, %s, %s)", 
-                       (date, po_number, vendor_name, invoice_total, payment_method, received_by))
-        mysql.connection.commit()
-        cursor.close()
-        flash("Purchase Order added successfully.", "success")
+        new_purchase_order = PurchaseOrder(
+            date=date,
+            po_number=po_number,
+            vendor_name=vendor_name,
+            invoice_total=invoice_total,
+            payment_method=payment_method,
+            received_by=received_by
+        )
+
+        db.session.add(new_purchase_order)
+        db.session.commit()
+
+        flash("Purchase order added successfully.", "success")
         return redirect(url_for('purchase_order'))
 
-    # Retrieve existing orders from database
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM purchase_order")
-    orders = cursor.fetchall()
-    cursor.close()
+    purchase_order = PurchaseOrder.query.order_by(desc(PurchaseOrder.date)).limit(100).all()
 
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM purchase_order ORDER BY date DESC LIMIT 100")  # Adjust the 'ORDER BY' clause as needed
-    orders = cursor.fetchall()
-    cursor.close()
-
-
-    return render_template('purchase_order.html', form=form, orders=orders)
-
-class JobApplicationForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    education = StringField('Education', validators=[DataRequired()])
-    experience = TextAreaField('Experience', validators=[DataRequired()])
-    reference = StringField('Reference')
-    submit = SubmitField('Submit')
-
-@app.route('/jobapplication', methods=['GET', 'POST'])
-def jobapplication():
-    form = JobApplicationForm()
-    return render_template('jobapplication.html', form=form)
+    return render_template('purchase_order.html', purchase_order=purchase_order)
 
 @app.route('/employee')
 def employee():
     return render_template('employee.html')
 
 @app.route('/main_terminal')
+@manager_required
 def main_terminal():
     return render_template('main_terminal.html')
 
@@ -459,8 +426,298 @@ def main_terminal():
 def misc():
     return "Hello World"
 
+@app.route('/lottery_input')
+def lottery_input():
+    return render_template('lottery_input.html')
+
+
+
+
+
+
+
+## This is for the tpurchase_order fields##
+def get_total_monthly_purchases(selected_month, selected_year):
+    # Calculate total purchases for the selected month and year
+    total_purchases = db.session.query(func.sum(PurchaseOrder.invoice_total)).filter(
+        func.extract('year', PurchaseOrder.date) == selected_year,
+        func.extract('month', PurchaseOrder.date) == selected_month
+    ).scalar() or Decimal('0.0')
+
+    return total_purchases
+
+def get_purchases_by_payment_type(selected_month, selected_year):
+    # Initialize the dictionary with all payment types set to zero
+    purchases_by_payment_type = {pt: Decimal('0.0') for pt in purchase_types}
+
+    # Perform database query and calculations
+    for payment_type in purchase_types:
+        total_purchase_by_payment = db.session.query(func.sum(PurchaseOrder.invoice_total)).filter(
+            PurchaseOrder.payment_method == payment_type,
+            func.extract('year', PurchaseOrder.date) == selected_year,
+            func.extract('month', PurchaseOrder.date) == selected_month
+        ).scalar() or Decimal('0.0')
+        
+        purchases_by_payment_type[payment_type] = total_purchase_by_payment
+
+    return purchases_by_payment_type
+
+def get_purchases_by_vendor(selected_month, selected_year):
+    # Retrieve vendors and their total purchases, and total purchases by payment method
+    vendors_and_purchases = db.session.query(
+        PurchaseOrder.vendor_name,
+        PurchaseOrder.payment_method,
+        func.sum(PurchaseOrder.invoice_total)
+    ).filter(
+        func.extract('year', PurchaseOrder.date) == selected_year,
+        func.extract('month', PurchaseOrder.date) == selected_month
+    ).group_by(PurchaseOrder.vendor_name, PurchaseOrder.payment_method).all()
+
+    # Initialize vendor purchases with all payment types set to zero
+    vendor_purchases = {}
+    for vendor, payment_method, total in vendors_and_purchases:
+        if vendor not in vendor_purchases:
+            # Initialize with zero totals for each payment type
+            vendor_purchases[vendor] = {'total_purchase': Decimal('0.0')}
+            for pt in purchase_types:
+                vendor_purchases[vendor][pt] = Decimal('0.0')
+        
+        # Add totals to the respective payment method and to the total purchase
+        if payment_method in purchase_types:  # Ensure the payment method is in your list
+            vendor_purchases[vendor][payment_method] += total
+        vendor_purchases[vendor]['total_purchase'] += total
+
+    # Convert to list of dictionaries for easier template processing
+    vendor_purchases_list = [
+        {
+            'vendor_name': vendor,
+            'total_purchase': f'${totals['total_purchase']:.2f}',
+            **{pt: f'${totals[pt]:.2f}' for pt in purchase_types}  # Include each payment type's total
+        } for vendor, totals in vendor_purchases.items()
+    ]
+
+    return vendor_purchases_list
+
+@app.route('/tpurchase_order', methods=['GET', 'POST'])
+def tpurchase_order():
+    if request.method == 'POST':
+        selected_month = int(request.form['selected_month'])
+        selected_year = int(request.form['selected_year'])
+
+        # Calculate total monthly purchases
+        total_monthly_purchases = get_total_monthly_purchases(selected_month, selected_year)
+
+        # Calculate total purchases by payment type
+        purchases_by_payment_type = get_purchases_by_payment_type(selected_month, selected_year)
+
+        # Calculate total purchases by vendor
+        vendor_purchases = get_purchases_by_vendor(selected_month, selected_year)
+
+        data = {
+            'total_monthly_purchases': f'${total_monthly_purchases}',
+            'purchases_by_payment_type': purchases_by_payment_type,
+            'vendor_purchases': vendor_purchases,
+            'purchase_types': purchase_types  # pass purchase_types to your template
+        }
+
+        return render_template('tpurchase_order.html', **data)
+
+    # Initial load or no POST request
+    return render_template('tpurchase_order.html',
+                           total_monthly_purchases='$0.00',
+                           purchases_by_payment_type={},
+                           vendor_purchases=[],
+                           purchase_types=purchase_types)  # pass purchase_types to your template
+
+
+## This is from the texpenses fields ##
+def get_total_monthly_expenses(selected_month, selected_year):
+    # Calculate total expenses for the selected month and year
+    total_expenses = db.session.query(func.sum(Expense.expense_amount)).filter(
+        func.extract('year', Expense.expense_date) == selected_year,
+        func.extract('month', Expense.expense_date) == selected_month
+    ).scalar() or Decimal('0.0')
+
+    return total_expenses
+
+def get_total_expenses_by_type(selected_month, selected_year):
+    # Calculate total expenses by expense type for the selected month and year
+    expenses_by_type = {}
+
+    for expense_type in expense_types:
+        total_expense_by_type = db.session.query(func.sum(Expense.expense_amount)).filter(
+            func.extract('year', Expense.expense_date) == selected_year,
+            func.extract('month', Expense.expense_date) == selected_month,
+            Expense.expense_type == expense_type
+        ).scalar() or Decimal('0.0')
+        
+        expenses_by_type[expense_type] = total_expense_by_type
+
+    return expenses_by_type
+
+def get_expenses_by_payment_type(selected_month, selected_year):
+    # Calculate total expenses by payment type for the selected month and year
+    expenses_by_payment_type = {}
+
+    for payment_type in purchase_types:
+        total_expense_by_payment_type = db.session.query(func.sum(Expense.expense_amount)).filter(
+            func.extract('year', Expense.expense_date) == selected_year,
+            func.extract('month', Expense.expense_date) == selected_month,
+            Expense.expense_pay_type == payment_type
+        ).scalar() or Decimal('0.0')
+        
+        expenses_by_payment_type[payment_type] = total_expense_by_payment_type
+
+    return expenses_by_payment_type
+
+@app.route('/texpenses', methods=['GET', 'POST'])
+def texpenses():
+    if request.method == 'POST':
+        # Handle form submission here if needed
+        pass
+
+    # Retrieve selected month and year from the request, or set defaults
+    selected_month = request.form.get('selected_month', None)
+    selected_year = request.form.get('selected_year', None)
+
+    # Calculate total monthly expenses
+    total_monthly_expenses = get_total_monthly_expenses(selected_month, selected_year)
+
+    # Calculate total expenses by expense type for the selected month and year
+    expenses_by_type = get_total_expenses_by_type(selected_month, selected_year)
+
+    # Calculate total expenses by payment type for the selected month and year
+    expenses_by_payment_type = get_expenses_by_payment_type(selected_month, selected_year)
+
+    data = {
+        'total_monthly_expenses': total_monthly_expenses,
+        'expenses_by_type': expenses_by_type,
+        'expenses_by_payment_type': expenses_by_payment_type
+    }
+
+    return render_template('texpenses.html', **data)
+
+
+
+def calculate_total_transfers(selected_month, selected_year):
+    # Use SQL queries to calculate total transfers between each store
+    
+    # Create a query using SQLAlchemy's ORM to calculate total transfers
+    query = db.session.query(
+        StoreTransfer.transferred_from,
+        StoreTransfer.transferred_to,
+        db.func.sum(StoreTransfer.amount).label('total_transfer')
+    ).filter(
+        db.func.extract('year', StoreTransfer.date) == selected_year,
+        db.func.extract('month', StoreTransfer.date) == selected_month
+    ).group_by(
+        StoreTransfer.transferred_from,
+        StoreTransfer.transferred_to
+    )
+    
+    # Execute the query and return the results
+    total_transfers = query.all()
+
+    return total_transfers
+
+def calculate_store_owes(total_transfers):
+    store_owes = {}
+    
+    # Iterate through total_transfers
+    for transfer in total_transfers:
+        from_store = transfer.transferred_from
+        to_store = transfer.transferred_to
+        amount = transfer.total_transfer
+
+        # Check if from_store and to_store are different
+        if from_store != to_store:
+            # If from_store doesn't exist in store_owes, create an entry
+            if from_store not in store_owes:
+                store_owes[from_store] = {}
+            
+            # If to_store doesn't exist in from_store's entry, create an entry
+            if to_store not in store_owes[from_store]:
+                store_owes[from_store][to_store] = 0
+            
+            # Increment the owed amount
+            store_owes[from_store][to_store] += amount
+            
+            # If to_store doesn't exist in store_owes, create an entry
+            if to_store not in store_owes:
+                store_owes[to_store] = {}
+            
+            # If from_store doesn't exist in to_store's entry, create an entry
+            if from_store not in store_owes[to_store]:
+                store_owes[to_store][from_store] = 0
+            
+            # Decrement the owed amount for the reverse direction
+            store_owes[to_store][from_store] -= amount
+
+    return store_owes
+
+@app.route('/tstore_transfer', methods=['GET', 'POST'])
+def tstore_transfer():
+    if request.method == 'POST':
+        # Handle form submission here if needed (you can add form handling logic here)
+        pass
+
+    # Retrieve selected month and year from the request, or set defaults
+    selected_month = request.form.get('selected_month', None)
+    selected_year = request.form.get('selected_year', None)
+
+    # Calculate total transfers for the selected month and year
+    total_transfers = calculate_total_transfers(selected_month, selected_year)
+
+    # Calculate store owes based on total transfers
+    store_owes = calculate_store_owes(total_transfers)
+
+    # Include the 'month_names' variable in the template context directly
+    context = {
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'from_transfer_types': from_transfer_types,  # Define from_transfer_types as needed
+        'to_transfer_types': to_transfer_types,  # Define to_transfer_types as needed
+        'month_names': [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ],
+        'total_transfers': total_transfers,  # Pass total transfers to the template
+        'store_owes': store_owes  # Pass store owes data to the template
+    }
+
+    return render_template('tstore_transfer.html', **context)
+
+
+
+
+@app.route('/tdaily_sales', methods=['GET', 'POST'])
+def tdaily_sales():
+    # Generate month names
+    month_names = [calendar.month_name[i] for i in range(1, 13)]
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+
+    if request.method == 'POST':
+        selected_month = int(request.form.get('selected_month', current_month))
+        selected_year = int(request.form.get('selected_year', current_year))
+        daily_sales_data = DailySales.query.filter(
+            db.func.extract('year', DailySales.date) == selected_year,
+            db.func.extract('month', DailySales.date) == selected_month
+        ).order_by(DailySales.date).all()
+    else:
+        selected_month = current_month
+        selected_year = current_year
+        daily_sales_data = []
+
+    return render_template(
+        'tdaily_sales.html', 
+        daily_sales_data=daily_sales_data,
+        selected_month=selected_month,
+        selected_year=selected_year,
+        month_names=month_names
+    )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 

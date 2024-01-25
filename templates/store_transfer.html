@@ -1,65 +1,88 @@
-{% extends 'appdesign.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <div class="row justify-content-between">
-        <!-- Form Box on Left Side -->
-        <div class="col-md-4">
-            <div class="highlight-box form-box">
-                <h3>Input Transfer</h3>
-                    {{ form.hidden_tag() }}
-                    <div class="container-box">
-                        {{ form.date(class="form-control", placeholder=form.date.label.text) }}
-                        {{ form.transfer_number(class="form-control", placeholder=form.transfer_number.label.text) }}
-                        {{ form.transferred_from(class="form-control", placeholder=form.transferred_from.label.text) }}
-                        {{ form.transferred_to(class="form-control", placeholder=form.transferred_to.label.text) }}
-                        {{ form.amount(class="form-control", placeholder=form.amount.label.text) }}
-                        {{ form.remark(class="form-control", placeholder=form.remark.label.text) }}
-                        <div class="mt-4">
-                            {{ form.submit(class="btn btn-outline-primary btn-lg") }}
-                        </div>
-                    </div>
-                </form>
-            </div>
+    
+<form method="POST">
+    <div class="row mb-3">
+        <!-- Date Input -->
+        <div class="col-md-2">
+            <input type="date" name="date" class="form-control" placeholder="Date" required>
         </div>
 
-        <!-- Table Box on Right Side -->
-        <div class="col-md-7">
-            <div class="highlight-box table-box">
-                <h3>Store Transfer History</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Date</th>
-                            <th scope="col">Transfer #</th>
-                            <th scope="col">Transferred From</th>
-                            <th scope="col">Transferred To</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Remark</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for transfer in transfers %}
-                            <tr>
-                                <td>{{ transfer[1] }}</td>
-                                <td>{{ transfer[2] }}</td>
-                                <td>{{ transfer[3] }}</td>
-                                <td>{{ transfer[4] }}</td>
-                                <td>{{ transfer[5] }}</td>
-                                <td>{{ transfer[6] }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        <!-- Transfer Number Input -->
+        <div class="col-md-2">
+            <input type="text" name="transfer_number" class="form-control" placeholder="Transfer Number" required>
+        </div>
+
+        <!-- Transferred From Select Box -->
+        <div class="col-md-2">
+            <select name="transferred_from" id="transferred_from" class="form-control" required>
+                <option value="">Select From</option>
+                {% for store_name in store_names %}
+                    <option value="{{ store_name }}">{{ store_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Transferred To Select Box -->
+        <div class="col-md-2">
+            <select name="transferred_to" id="transferred_to" class="form-control" required>
+                <option value="">Select To</option>
+                {% for store_name in store_names %}
+                    <option value="{{ store_name }}">{{ store_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Amount Input -->
+        <div class="col-md-2">
+            <input type="number" name="amount" class="form-control" placeholder="Amount" required>
+        </div>
+
+        <!-- Remark Input -->
+        <div class="col-md-2">
+            <input type="text" name="remark" class="form-control" placeholder="Remark">
         </div>
     </div>
+
+    <!-- Submit Button Row -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</form>
+
+<!-- Table for Store Transfer History -->
+<div class="row justify-content-between">
+    <div class="col-md-12">
+        <div class="highlight-box table-box">
+            <h3>Store Transfer History</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Transfer #</th>
+                        <th scope="col">Transferred From</th>
+                        <th scope="col">Transferred To</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Remark</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transfer in transfers %}
+                        <tr>
+                            <td>{{ transfer.date }}</td>
+                            <td>{{ transfer.transfer_number }}</td>
+                            <td>{{ transfer.transferred_from }}</td>
+                            <td>{{ transfer.transferred_to }}</td>
+                            <td>{{ transfer.amount }}</td>
+                            <td>{{ transfer.remark }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

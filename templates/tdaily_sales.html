@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Daily Sales{% endblock %}
+
+{% block content %}
+<h1>Daily Sales</h1>
+
+<div class="container">
+    <form method="POST" action="/tdaily_sales">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>
+                        <select class="form-control" id="select_month" name="selected_month">
+                            {% for month_num in range(1, 13) %}
+                                <option value="{{ month_num }}" {% if month_num|string == selected_month|string %}selected{% endif %}>
+                                    {{ month_names[month_num - 1] }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" id="select_year" name="selected_year">
+                            {% for year in range(selected_year - 10, selected_year + 1) %}
+                                <option value="{{ year }}" {% if year|string == selected_year|string %}selected{% endif %}>
+                                    {{ year }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="highlight-box form-box">
+                <h3>Daily Sales Data</h3>
+                <div class="container-box">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Date</th>
+                                <th>Total Sales Day</th>
+                                <th>Card Total Day</th>
+                                <th>Drop Total Day</th>
+                                <th>Lotto Payout Day</th>
+                                <th>Payout1 Day</th>
+                                <th>Payout2 Day</th>
+                                <th>Over/Short</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sale in daily_sales_data %}
+                                <tr>
+                                    <td>{{ sale.date.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ sale.total_sales_day }}</td>
+                                    <td>{{ sale.card_total_day }}</td>
+                                    <td>{{ sale.drop_total_day }}</td>
+                                    <td>{{ sale.lotto_payout_day }}</td>
+                                    <td>{{ sale.payout1_day }}</td>
+                                    <td>{{ sale.payout2_day }}</td>
+                                    <td>{{ sale.over_short }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

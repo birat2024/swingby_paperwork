@@ -1,39 +1,15 @@
-{% extends 'appdesign.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-  <!-- Display Flash Messages -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="{{ category }}">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+    <h2>Login</h2>
+    <form method="POST">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 mx-auto">
-        <div class="highlight-box">
-          <h3 class="text-left mt-2">Login</h3>
-          <form action="{{ url_for('login') }}" method="POST">
-            {{ form.hidden_tag() }}
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
 
-            <!-- Email Field -->
-            {% if form.email.errors %}
-              <div class="alert alert-danger">{{ form.email.errors[0] }}</div>
-            {% endif %}
-            {{ form.email(class="form-control", id="email", placeholder=form.email.label.text) }}
-
-            <!-- Password Field -->
-            {% if form.password.errors %}
-              <div class="alert alert-danger">{{ form.password.errors[0] }}</div>
-            {% endif %}
-            {{ form.password(class="form-control", id="password", placeholder=form.password.label.text) }}
-
-            <button type="submit" class="btn btn-outline-primary btn-lg mt-3">Login</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+        <button type="submit">Login</button>
+    </form>
+    <p>{{ message }}</p>
 {% endblock %}

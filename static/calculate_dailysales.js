@@ -1,57 +1,51 @@
-// calculate_dailysales.js
+// Wait for the document to fully load before executing JavaScript
+document.addEventListener("DOMContentLoaded", function () {
+    // Get references to the input fields for each row
+    var rows = document.querySelectorAll('tbody tr');
 
-// Function to calculate day totals for shift details
-function calculateDayTotals() {
-    var totalSalesShift1 = parseFloat(document.getElementById('total_sales_shift1').value) || 0;
-    var totalSalesShift2 = parseFloat(document.getElementById('total_sales_shift2').value) || 0;
-    document.getElementById('total_sales_day').value = (totalSalesShift1 + totalSalesShift2).toFixed(2);
+    // Function to calculate row totals
+    function calculateRowTotal(row) {
+        var shift1Input = row.querySelector('[name$="_shift1"]');
+        var shift2Input = row.querySelector('[name$="_shift2"]');
+        var dayInput = row.querySelector('[name$="_day"]');
 
-    var cardTotalShift1 = parseFloat(document.getElementById('card_total_shift1').value) || 0;
-    var cardTotalShift2 = parseFloat(document.getElementById('card_total_shift2').value) || 0;
-    document.getElementById('card_total_day').value = (cardTotalShift1 + cardTotalShift2).toFixed(2);
+        var shift1Value = parseFloat(shift1Input.value) || 0;
+        var shift2Value = parseFloat(shift2Input.value) || 0;
 
-    var dropTotalShift1 = parseFloat(document.getElementById('drop_total_shift1').value) || 0;
-    var dropTotalShift2 = parseFloat(document.getElementById('drop_total_shift2').value) || 0;
-    document.getElementById('drop_total_day').value = (dropTotalShift1 + dropTotalShift2).toFixed(2);
+        // Check if the input fields are not greyed out
+        if (!shift1Input.disabled && !shift2Input.disabled) {
+            var dayTotal = shift1Value + shift2Value;
+            dayInput.value = dayTotal.toFixed(2);
+        }
+    }
 
-    var lottoPayoutShift1 = parseFloat(document.getElementById('lotto_payout_shift1').value) || 0;
-    var lottoPayoutShift2 = parseFloat(document.getElementById('lotto_payout_shift2').value) || 0;
-    document.getElementById('lotto_payout_day').value = (lottoPayoutShift1 + lottoPayoutShift2).toFixed(2);
+    // Function to calculate "Over/Short"
+    function calculateOverShort() {
+        var totalSalesDay = parseFloat(document.querySelector('[name="total_sales_day"]').value) || 0;
+        var cardTotalDay = parseFloat(document.querySelector('[name="card_total_day"]').value) || 0;
+        var dropTotalDay = parseFloat(document.querySelector('[name="drop_total_day"]').value) || 0;
+        var lottoPayoutDay = parseFloat(document.querySelector('[name="lotto_payout_day"]').value) || 0;
+        var payout1Day = parseFloat(document.querySelector('[name="payout1_day"]').value) || 0;
+        var payout2Day = parseFloat(document.querySelector('[name="payout2_day"]').value) || 0;
+        var dayColumnInput = document.querySelector('[name="over_short"]');
 
-    var payout1Shift1 = parseFloat(document.getElementById('payout1_shift1').value) || 0;
-    var payout1Shift2 = parseFloat(document.getElementById('payout1_shift2').value) || 0;
-    document.getElementById('payout1_day').value = (payout1Shift1 + payout1Shift2).toFixed(2);
+        var overShort = cardTotalDay + dropTotalDay + lottoPayoutDay + payout1Day + payout2Day - totalSalesDay;
 
-    var payout2Shift1 = parseFloat(document.getElementById('payout2_shift1').value) || 0;
-    var payout2Shift2 = parseFloat(document.getElementById('payout2_shift2').value) || 0;
-    document.getElementById('payout2_day').value = (payout2Shift1 + payout2Shift2).toFixed(2);
+        dayColumnInput.value = overShort.toFixed(2);
+    }
 
-    // Calculate over/short
-    calculateOverShort();
-}
+    // Add event listeners to input fields for live auto calculation
+    rows.forEach(function (row) {
+        var inputs = row.querySelectorAll('input[type="number"]');
+        inputs.forEach(function (input) {
+            input.addEventListener('input', function () {
+                calculateRowTotal(row);
+                calculateOverShort(); // Calculate "Over/Short" whenever any input changes
+            });
+        });
+    });
 
-function calculateOverShort() {
-    // Assuming over_short is the difference between total sales and sum of other totals
-    var totalSalesDay = parseFloat(document.getElementById('total_sales_day').value) || 0;
-    var cardTotalDay = parseFloat(document.getElementById('card_total_day').value) || 0;
-    var dropTotalDay = parseFloat(document.getElementById('drop_total_day').value) || 0;
-    var lottoPayoutDay = parseFloat(document.getElementById('lotto_payout_day').value) || 0;
-    var payout1Day = parseFloat(document.getElementById('payout1_day').value) || 0;
-    var payout2Day = parseFloat(document.getElementById('payout2_day').value) || 0;
-
-    var overShort = totalSalesDay - (cardTotalDay + dropTotalDay + lottoPayoutDay + payout1Day + payout2Day);
-    document.getElementById('over_short').value = overShort.toFixed(2);
-}
-
-// Add event listeners to shift detail fields for auto calculation
-document.querySelectorAll('.form-control').forEach(item => {
-    item.addEventListener('input', calculateDayTotals);
+    // Trigger initial calculation when the page loads
+    calculateRowTotal(rows[0]); // Calculate for the first row
+    calculateOverShort(); // Calculate "Over/Short" initially
 });
-
-
-
-
-
-
-
-

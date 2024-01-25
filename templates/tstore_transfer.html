@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Total Transfers and Store Owes{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Select Month and Year -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="highlight-box form-box">
+                <h3>Select Month and Year</h3>
+                <form method="POST" action="/tstore_transfer">
+                    <div class="container-box">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-control" id="select_month" name="selected_month">
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <!-- Add options for all months -->
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" id="select_year" name="selected_year">
+                                            <option value="2024">2024</option>
+                                            <option value="2023">2023</option>
+                                            <!-- Add options for desired years -->
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Transfers and Store Owes (Side by Side) -->
+    <div class="row">
+        <!-- Total Transfers -->
+        <div class="col-md-6">
+            <div class="highlight-box form-box">
+                <h3>Total Transfers</h3>
+                <div class="container-box">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Transferred From</th>
+                                <th>Transferred To</th>
+                                <th>Total Transfer Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transfer in total_transfers %}
+                                <tr>
+                                    <td>{{ transfer.transferred_from }}</td>
+                                    <td>{{ transfer.transferred_to }}</td>
+                                    <td>{{ transfer.total_transfer }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Store Owes -->
+    <div class="col-md-6">
+        <div class="highlight-box form-box">
+            <h3>Store Owes</h3>
+            <div class="container-box">
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Store</th>
+                            <th>Owes to Store</th>
+                            <th>Total Owed Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for from_store, to_stores in store_owes.items() %}
+                            {% for to_store, total_owed in to_stores.items() %}
+                                <tr>
+                                    <td>{{ from_store }}</td>
+                                    <td>{{ to_store }}</td>
+                                    <td>{{ total_owed }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    </div>
+</div>
+{% endblock %}

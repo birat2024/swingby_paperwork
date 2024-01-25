@@ -1,66 +1,67 @@
-{% extends 'appdesign.html' %}
+{% extends "base.html" %}
 
 {% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Orders</title>
+</head>
+<body>
+    <div class="container">
+        <h3>Purchase Orders</h3>
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <div class="row justify-content-between">
-        <!-- Form Box on Left Side -->
-        <div class="col-md-4">
-            <div class="highlight-box form-box">
-                <h3>Purchase Order</h3>
-                    {{ form.hidden_tag() }}
-                    <div class="container-box">
-                        <!-- Form Fields -->
-                        {{ form.date(class="form-control", placeholder=form.date.label.text) }}
-                        {{ form.po_number(class="form-control", placeholder=form.po_number.label.text) }}
-                        {{ form.vendor_name(class="form-control", placeholder=form.vendor_name.label.text) }}
-                        {{ form.invoice_total(class="form-control", placeholder=form.invoice_total.label.text) }}
-                        {{ form.payment_method(class="form-control", placeholder=form.payment_method.label.text) }}
-                        {{ form.received_by(class="form-control", placeholder=form.received_by.label.text) }}
-                        <div class="mt-4">
-                            {{ form.submit(class="btn btn-outline-primary btn-lg") }}
-                        </div>
-                    </div>
-                </form>
+        <!-- Input Form -->
+        <form method="POST">
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <input type="date" name="date" class="form-control" placeholder="Date" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="po_number" class="form-control" placeholder="PO Number" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="vendor_name" class="form-control" placeholder="Vendor Name" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" name="invoice_total" class="form-control" placeholder="Invoice Total" step="0.01" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="payment_method" class="form-control" placeholder="Payment Method" required>
+                </div>
+                <div class="col-md-1">
+                    <input type="text" name="received_by" class="form-control" placeholder="Received By" required>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
             </div>
-        </div>
+        </form>
 
-        <!-- Table Box on Right Side -->
-        <div class="col-md-8">
-            <div class="highlight-box table-box">
-                <h3>Detailed Purchase Order Data</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Date</th>
-                            <th scope="col">PO#</th>
-                            <th scope="col">Vendor Name</th>
-                            <th scope="col">Invoice Total</th>
-                            <th scope="col">Payment Method</th>
-                            <th scope="col">Received By</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for order in orders %}
-                            <tr>
-                                <td>{{ order[1] }}</td>
-                                <td>{{ order[2] }}</td>
-                                <td>{{ order[3] }}</td>
-                                <td>{{ order[4] }}</td>
-                                <td>{{ order[5] }}</td>
-                                <td>{{ order[6] }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <!-- Display Added Data -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>PO Number</th>
+                    <th>Vendor Name</th>
+                    <th>Invoice Total</th>
+                    <th>Payment Method</th>
+                    <th>Received By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase_order in purchase_order %}
+                <tr>
+                    <td>{{ purchase_order.date }}</td>
+                    <td>{{ purchase_order.po_number }}</td>
+                    <td>{{ purchase_order.vendor_name }}</td>
+                    <td>{{ purchase_order.invoice_total }}</td>
+                    <td>{{ purchase_order.payment_method }}</td>
+                    <td>{{ purchase_order.received_by }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+</body>
 {% endblock %}

@@ -1,60 +1,69 @@
-{% extends 'appdesign.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h3>Expenses Form</h3>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses</title>
+</head>
+<body>
+    <div class="container">
+        <h3>Expenses</h3>
 
-    <!-- Input Form -->
-    <form method="POST" id="expenseForm">
-        {{ form.hidden_tag() }}
+        <!-- Input Form -->
+        <form method="POST">
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <input type="date" name="expense_date" class="form-control" placeholder="Date" required>
+                </div>
+                <div class="col-md-2">
+                    <select name="expense_type" class="form-control" required>
+                        <option value="" selected disabled>Select Expense Type</option>
+                        {% for expense_type_option in expense_types %}
+                            <option value="{{ expense_type_option }}">{{ expense_type_option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <input type="text" name="expense_description" class="form-control" placeholder="Description" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" name="expense_amount" class="form-control" placeholder="Amount" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="expense_pay_type" class="form-control" placeholder="Payment Type" required>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </form>
 
-        <div class="row mb-3">
-            <div class="col-md-2">
-                {{ form.expense_date(class="form-control", placeholder="Date") }}
-            </div>
-            <div class="col-md-2">
-                {{ form.expense_type(class="form-control", placeholder="Expense Type") }}
-            </div>
-            <div class="col-md-3">
-                {{ form.expense_description(class="form-control", placeholder="Description") }}
-            </div>
-            <div class="col-md-2">
-                {{ form.expense_amount(class="form-control", placeholder="Amount") }}
-            </div>
-            <div class="col-md-2">
-                {{ form.expense_pay_type(class="form-control", placeholder="Payment Type") }}
-            </div>
-            <div class="col-md-1">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-        </div>
-    </form>
-
-    <!-- Display Added Data -->
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Expense Type</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Payment Type</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for expense in expenses %}
-            <tr>
-                <td>{{ expense[1] }}</td>
-                <td>{{ expense[2] }}</td>
-                <td>{{ expense[3] }}</td>
-                <td>{{ expense[4] }}</td>
-                <td>{{ expense[5] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-<!-- Link to JavaScript file -->
-<script src="{{ url_for('static', filename='calculate_dailysales.js') }}"></script>
-
+        <!-- Display Added Data -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Expense Type</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Payment Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.expense_date }}</td>
+                    <td>{{ expense.expense_type }}</td>
+                    <td>{{ expense.expense_description }}</td>
+                    <td>{{ expense.expense_amount }}</td>
+                    <td>{{ expense.expense_pay_type }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
 {% endblock %}
+

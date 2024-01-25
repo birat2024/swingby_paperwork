@@ -1,8 +1,41 @@
-{% extends 'appdesign.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-3">
-    <h2>Welcome to the Main Terminal!</h2>
-    <!-- Add more content here as needed -->
+
+
+
+
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Daily Sales Button -->
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('tdaily_sales') }}" class="dashboard-button btn-outline-success">Monthly Sales</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('dashboard') }}" class="dashboard-button btn-outline-warning">Dashboard</a>
+        </div>
+        <!-- Purchase Order Button -->
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('tpurchase_order') }}" class="dashboard-button btn-outline-success">Monthly PO</a>
+        </div>
+        <!-- Store Transfer Button -->
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('tstore_transfer') }}" class="dashboard-button btn-outline-info">Monthly Transfer</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('texpenses') }}" class="dashboard-button btn-outline-info">Monthly Expenses</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('lottery_input') }}" class="dashboard-button btn-outline-info">Monthly Lottery</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('misc') }}" class="dashboard-button btn-outline-info">Misc</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('employee') }}" class="dashboard-button btn-outline-info">Employee</a>
+        </div>
+        <!-- More buttons can be added here -->
+    </div>
 </div>
 {% endblock %}
