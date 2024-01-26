@@ -1,41 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-
-
-
-
 <div class="container mt-4">
     <div class="row">
-        <!-- Daily Sales Button -->
+        <!-- Monthly Sales Button -->
         <div class="col-md-4 mb-4">
-            <a href="{{ url_for('tdaily_sales') }}" class="dashboard-button btn-outline-success">Monthly Sales</a>
+            <a href="{{ url_for('tdaily_sales') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly Sales</a>
+            <a href="{{ url_for('dashboard') }}" class="dashboard-button btn-outline-secondary mb-4">Dashboard</a>
+            <a href="{{ url_for('tpurchase_order') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly PO</a>
+            <a href="{{ url_for('store_transfer') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly Transfer</a>
         </div>
+
+        <!-- Monthly Expenses Button -->
         <div class="col-md-4 mb-4">
-            <a href="{{ url_for('dashboard') }}" class="dashboard-button btn-outline-warning">Dashboard</a>
+            <a href="{{ url_for('texpenses') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly Expenses</a>
+            <a href="{{ url_for('lottery_input') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly Lottery</a>
+            <a href="{{ url_for('employee') }}" class="dashboard-button btn-outline-secondary mb-4">Employee</a>
         </div>
-        <!-- Purchase Order Button -->
+
+        <!-- Misc Button -->
         <div class="col-md-4 mb-4">
-            <a href="{{ url_for('tpurchase_order') }}" class="dashboard-button btn-outline-success">Monthly PO</a>
+            <a href="{{ url_for('misc') }}" class="dashboard-button btn-outline-secondary mb-4">Misc</a>
         </div>
-        <!-- Store Transfer Button -->
-        <div class="col-md-4 mb-4">
-            <a href="{{ url_for('tstore_transfer') }}" class="dashboard-button btn-outline-info">Monthly Transfer</a>
-        </div>
-        <div class="col-md-4 mb-4">
-            <a href="{{ url_for('texpenses') }}" class="dashboard-button btn-outline-info">Monthly Expenses</a>
-        </div>
-        <div class="col-md-4 mb-4">
-            <a href="{{ url_for('lottery_input') }}" class="dashboard-button btn-outline-info">Monthly Lottery</a>
-        </div>
-        <div class="col-md-4 mb-4">
-            <a href="{{ url_for('misc') }}" class="dashboard-button btn-outline-info">Misc</a>
-        </div>
-        <div class="col-md-4 mb-4">
-            <a href="{{ url_for('employee') }}" class="dashboard-button btn-outline-info">Employee</a>
-        </div>
-        <!-- More buttons can be added here -->
+
+        <!-- Additional Buttons can be added here -->
     </div>
 </div>
 {% endblock %}

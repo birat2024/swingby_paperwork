@@ -7,27 +7,33 @@ body, html {
     flex-direction: column;
 }
 
+.container {
+    flex: 1;
+}
+
 /* Header */
 .navbar.bg-light-green {
     background-color: rgb(10, 48, 97) !important;
     height: 60px; /* Set height of the navbar */
 }
 
+
 /* Content */
 .content {
     flex: 1 0 auto;
     padding-top: 60px; /* Padding to ensure content doesn't overlap fixed navbar */
+    padding-bottom: 60px; /* Add padding at the bottom to avoid overlap with the footer */
 }
 
 /* Footer */
 .footer {
     background-color: transparent;
     text-align: center;
-    position: fixed;
-    bottom: 0;
+    position: static; /* Change back to static for small screens */
     width: 100%;
-    height: 60px; /* Set the fixed height of the footer here */
-    line-height: 60px; /* Vertically center the text */
+    height: 60px;
+    line-height: 1.5; /* Adjust the line-height value to reduce spacing between lines */
+    clear: both; /* Clear the float */
 }
 
 /* Adjust padding for smaller screens */
@@ -37,12 +43,15 @@ body, html {
     }
     .content {
         padding-top: 50px;
+        padding-bottom: 50px; /* Adjust padding at the bottom for small screens */
     }
     .footer {
-        height: 50px;
-        line-height: 50px;
+        position: static;
+        height: auto;
+        line-height: normal;
     }
 }
+
 
 
 
@@ -143,28 +152,28 @@ body {
 
 
 
-    /* Dashboard Design*/
+    /* Dashboard Design */
+.dashboard-button {
+    display: block;
+    width: 100%;
+    height: 130px; /* Adjust the height as needed */
+    padding: 10px;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 90px; /* Adjust line height to vertically center the text inside the button */
+    border: 5px solid;
+    border-radius: 40px; /* Adjust the border-radius for rounded corners */
+    text-decoration: none; /* Remove underline from links */
+    color: inherit; /* Use text color of parent */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
+}
 
-    .dashboard-button {
-        display: block;
-        width: 100%;
-        height: 200px;
-        padding: 10px;
-        font-size: 30px;
-        font-weight: bold;
-        text-align: center;
-        line-height: 160px; /* Adjust line height to vertically center the text inside the button */
-        border: 5px solid;
-        border-radius: 100px; /* Rounded corners */
-        text-decoration: none; /* Remove underline from links */
-        color: inherit; /* Use text color of parent */
-        transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
-    }
-    
-    .dashboard-button:hover {
-        color: #fff; /* White text on hover */
-        background-color: #007bff; /* Bootstrap primary color on hover */
-    }
+.dashboard-button:hover {
+    color: #fff; /* White text on hover */
+    background-color: #007bff; /* Bootstrap primary color on hover */
+}
+
     
     .btn-outline-primary {
         border-color: #007bff;
