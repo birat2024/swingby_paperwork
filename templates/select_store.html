@@ -1,0 +1,27 @@
+
+
+<!-- select_store.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Select Store</title>
+</head>
+
+<body>
+    <h1>Select a Store</h1>
+    <form action="{{ url_for('select_store', store_id=selected_store.id) }}" method="post">
+        <label for="store">Choose a store:</label>
+        <select id="store" name="store">
+            {% for store in user_stores %}
+                <option value="{{ store.id }}">{{ store.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Select">
+    </form>
+</body>
+
+</html>

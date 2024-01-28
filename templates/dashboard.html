@@ -2,32 +2,45 @@
 
 {% block content %}
 <div class="container mt-4">
+        
+
     <div class="row">
-        <div class="col-md-4 mb-4">
-            <!-- Row 1 -->
-            <a href="{{ url_for('dailysales') }}" class="dashboard-button btn-outline-primary mb-4">Daily Sales</a>
-            <!-- Row 2 -->
-            <a href="{{ url_for('main_terminal') }}" class="dashboard-button btn-outline-success mb-4">Terminal</a>
-            <!-- Row 3 -->
-            <a href="{{ url_for('purchase_order') }}" class="dashboard-button btn-outline-success mb-4">Purchase Order</a>
-            <!-- Row 4 -->
-            <a href="{{ url_for('store_transfer') }}" class="dashboard-button btn-outline-info mb-4">Store Transfer</a>
-        </div>
+        <div class="col-md-12">
+            <!-- Dashboard Buttons -->
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <!-- Row 1 -->
+                    <a href="{{ url_for('dailysales') }}" class="dashboard-button btn-outline-primary mb-4">Daily Sales</a>
+                    <a href="{{ url_for('lottery_input') }}" class="dashboard-button btn-outline-primary mb-4">Lottery</a>
+                    <a href="{{ url_for('expenses') }}" class="dashboard-button btn-outline-primary mb-4">Expenses</a>
+                </div>
 
-        <div class="col-md-4 mb-4">
-            <!-- Row 5 -->
-            <a href="{{ url_for('expenses') }}" class="dashboard-button btn-outline-info mb-4">Expenses</a>
-            <!-- Row 6 -->
-            <a href="{{ url_for('lottery_input') }}" class="dashboard-button btn-outline-info mb-4">Lottery</a>
-            <!-- Row 7 -->
-            <a href="{{ url_for('employee') }}" class="dashboard-button btn-outline-info mb-4">Employee</a>
-        </div>
+                <div class="col-md-4 mb-4">
+                    <!-- Row 2 -->
+                    <a href="{{ url_for('purchase_order') }}" class="dashboard-button btn-outline-success mb-4">Purchase Order</a>
+                    <a href="{{ url_for('store_transfer') }}" class="dashboard-button btn-outline-success mb-4">Store Transfer</a>
+                    <a href="{{ url_for('employee') }}" class="dashboard-button btn-outline-success mb-4">Employee</a>
+                </div>
 
-        <div class="col-md-4 mb-4">
-            <!-- Row 8 -->
-            <a href="{{ url_for('misc') }}" class="dashboard-button btn-outline-info mb-4">Misc</a>
-            <!-- Additional Rows can be added here if needed -->
+                <div class="col-md-4 mb-4">
+                    <!-- Row 3 -->
+                    <a href="{{ url_for('main_terminal') }}" class="dashboard-button btn-outline-warning mb-4">Terminal</a>
+                    <a href="{{ url_for('misc') }}" class="dashboard-button btn-outline-warning mb-4">Misc</a>
+                    <!-- Additional Rows can be added here if needed -->
+                </div>
+            </div>
+            <!-- Additional content can be added here if needed -->
         </div>
     </div>
 </div>
+
+
+<script>
+    function updateSelectedStore(selectElement) {
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+        var selectedStoreName = selectedOption.text;
+        document.getElementById("selectedStoreLabel").innerText = selectedStoreName;
+    }
+</script>
+
 {% endblock %}

@@ -31,6 +31,16 @@
                                         </select>
                                     </td>
                                     <td>
+                                        <select class="form-control" name="selected_store" id="store-selector">
+                                            <option value="" disabled selected>Select Store</option>
+                                            {% for store in user_stores %}
+                                                <option value="{{ store.id }}">
+                                                    {{ store.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>                                        
+                                    </td>
+                                    <td>
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </td>
                                 </tr>
@@ -119,5 +129,14 @@
 
 
     </div>
+    <script>
+        // JavaScript to prevent the selected store from reverting after form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const storeSelector = document.getElementById('store-selector');
+            const selectedStoreId = "{{ selected_store_id }}"; // Get the selected_store_id from the template
+    
+            storeSelector.value = selectedStoreId; // Set the selected value to match the selected_store_id
+        });
+    </script>
 </div>
 {% endblock %}

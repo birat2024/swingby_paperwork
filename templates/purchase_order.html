@@ -13,6 +13,7 @@
         <!-- Input Form -->
         <form method="POST">
             <div class="row mb-3">
+                <!-- Add form fields for entering purchase order details -->
                 <div class="col-md-2">
                     <input type="date" name="date" class="form-control" placeholder="Date" required>
                 </div>
@@ -31,13 +32,22 @@
                 <div class="col-md-1">
                     <input type="text" name="received_by" class="form-control" placeholder="Received By" required>
                 </div>
+                <div class="col-md-2">
+                    <!-- Add the store selector as a dropdown -->
+                    <select name="store_id" class="form-control" required>
+                        <option value="" disabled>Select Store</option>
+                        {% for store in stores %}
+                            <option value="{{ store.id }}" {% if store.id == default_store %}selected{% endif %}>{{ store.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <div class="col-md-1">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </form>
 
-        <!-- Display Added Data -->
+        <!-- Display Added Purchase Orders -->
         <table class="table">
             <thead>
                 <tr>
@@ -50,7 +60,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for purchase_order in purchase_order %}
+                {% for purchase_order in purchase_orders %}
                 <tr>
                     <td>{{ purchase_order.date }}</td>
                     <td>{{ purchase_order.po_number }}</td>

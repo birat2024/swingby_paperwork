@@ -8,6 +8,7 @@
                 <h3>Sign Up</h3>
 
                 <form method="POST">
+                    <!-- Existing form fields -->
                     <div class="form-group">
                         <label for="name">Name:</label>
                         <input type="text" name="name" class="form-control" required>
@@ -32,10 +33,28 @@
                         </select>
                     </div>
 
+                    <!-- New form field for selecting multiple stores -->
+                    <div class="form-group">
+                        <label for="stores">Select Stores:</label>
+                        <select name="stores" class="selectpicker" multiple data-live-search="true">
+                            {% for store in all_stores %}
+                                <option value="{{ store.id }}">{{ store.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Sign Up</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Include Bootstrap Select CSS and JS files -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
 {% endblock %}

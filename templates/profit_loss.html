@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h3>Profit and Loss</h3>
+
+    <!-- Manual Selection Form -->
+    <form method="POST">
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <select name="selected_month" class="form-control" required>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <!-- Add options for other months -->
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="selected_year" class="form-control" required>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <!-- Add options for other years -->
+                </select>
+            </div>
+            <div class="col-md-2">
+                <!-- Add the store selector as a dropdown, similar to other pages -->
+                <select name="selected_store" class="form-control" required>
+                    <option value="" disabled>Select Store</option>
+                    {% for store in user_stores %}
+                        <option value="{{ store.id }}">{{ store.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Calculate</button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Total P/L</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total Revenue</td>
+                        <td>{{ total_revenue }}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Purchases</td>
+                        <td>{{ total_purchases }}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select name="expense_type" class="form-control">
+                                <option value="all">All Expenses</option>
+                                {% for expense_type, total_expense in total_expenses_by_type.items() %}
+                                    <option value="{{ expense_type }}">{{ expense_type }} (Total: {{ total_expense }})</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>{{ total_expenses }}</td>
+                    </tr>
+                    
+                                       
+                    <tr>
+                        <td>Profit/Loss</td>
+                        <td>{{ profit_loss }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h4>Total In/Out</h4>
+            <ul>
+                <li>Total Revenue: {{ total_revenue }}</li>
+                <li>Total Purchases: {{ total_purchases }}</li>
+                <li>Total Expenses: {{ total_expenses }}</li>
+                <li>Profit/Loss: {{ profit_loss }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

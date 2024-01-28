@@ -5,22 +5,27 @@
     <div class="row">
         <!-- Monthly Sales Button -->
         <div class="col-md-4 mb-4">
-            <a href="{{ url_for('tdaily_sales') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly Sales</a>
-            <a href="{{ url_for('dashboard') }}" class="dashboard-button btn-outline-secondary mb-4">Dashboard</a>
+            <a href="{{ url_for('tdaily_sales') }}" class="dashboard-button btn-outline-success mb-4">Monthly Sales</a>
+            <a href="{{ url_for('texpenses') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly Expenses</a>
             <a href="{{ url_for('tpurchase_order') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly PO</a>
             <a href="{{ url_for('store_transfer') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly Transfer</a>
         </div>
 
         <!-- Monthly Expenses Button -->
         <div class="col-md-4 mb-4">
-            <a href="{{ url_for('texpenses') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly Expenses</a>
             <a href="{{ url_for('lottery_input') }}" class="dashboard-button btn-outline-secondary mb-4">Monthly Lottery</a>
-            <a href="{{ url_for('employee') }}" class="dashboard-button btn-outline-secondary mb-4">Employee</a>
+            <a href="{{ url_for('temployee') }}" class="dashboard-button btn-outline-secondary mb-4">Employee</a>
+            <a href="{{ url_for('profit_loss') }}" class="dashboard-button btn-outline-primary mb-4">Monthly PL</a>
+
         </div>
 
         <!-- Misc Button -->
         <div class="col-md-4 mb-4">
-            <a href="{{ url_for('misc') }}" class="dashboard-button btn-outline-secondary mb-4">Misc</a>
+            <a href="{{ url_for('dashboard') }}" class="dashboard-button btn-outline-warning mb-4">Dashboard</a>
+            <a href="{{ url_for('misc') }}" class="dashboard-button btn-outline-info mb-4">Misc</a>
+            <a href="{{ url_for('jobs') }}" class="dashboard-button btn-outline-secondary mb-4">Jobs</a>
+
+
         </div>
 
         <!-- Additional Buttons can be added here -->

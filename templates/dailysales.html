@@ -15,10 +15,31 @@
                     <div class="highlight-box form-box">
                         <h3>Employee Daily Entry</h3>
                         <div class="container-box">
-                            <div class="form-group">
-                                <label for="date_employee">Date:</label>
-                                <input type="date" name="date" class="form-control" required>
+                         
+                            <div class="row">
+                                <!-- Date Input -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="date_employee">Date:</label>
+                                        <input type="date" name="date" class="form-control" required>
+                                    </div>
+                                </div>
+                                <!-- Store Selector -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="selected_store"></label>
+                                        <select name="selected_store" class="form-control" required>
+                                            <option value="" disabled>Select Store</option>
+                                            {% for store in user_stores %}
+                                                <option value="{{ store.id }}" {% if selected_store and selected_store.id == store.id %}selected{% endif %}>{{ store.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
+                            
+                           
+
                             <table class="table">
                             <tbody>
                                 <tr>

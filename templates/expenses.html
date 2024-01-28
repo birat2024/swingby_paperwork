@@ -16,11 +16,21 @@
                 <div class="col-md-2">
                     <input type="date" name="expense_date" class="form-control" placeholder="Date" required>
                 </div>
+                <!-- New: Store Selection -->
                 <div class="col-md-2">
-                    <select name="expense_type" class="form-control" required>
-                        <option value="" selected disabled>Select Expense Type</option>
-                        {% for expense_type_option in expense_types %}
-                            <option value="{{ expense_type_option }}">{{ expense_type_option }}</option>
+                    <select name="selected_store" class="form-control" required>
+                        <option value="" disabled>Select Store</option>
+                        {% for store in user_stores %}
+                            <option value="{{ store.id }}" {% if selected_store and selected_store.id == store.id %}selected{% endif %}>{{ store.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-2">
+                    <select name="expense_type" class="form-control" id="expense_type" required>
+                        <option value="" disabled>Select Expense Type</option>
+                        {% for expense_type in expense_types %}
+                            <option value="{{ expense_type }}">{{ expense_type }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -28,42 +38,48 @@
                 <div class="col-md-3">
                     <input type="text" name="expense_description" class="form-control" placeholder="Description" required>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <input type="number" name="expense_amount" class="form-control" placeholder="Amount" required>
                 </div>
-                <div class="col-md-2">
-                    <input type="text" name="expense_pay_type" class="form-control" placeholder="Payment Type" required>
+                <div class="col-md-1">
+                    <select name="expense_pay_type" class="form-control" id="expense_pay_type" required>
+                        <option value="" disabled>Select Payment Type</option>
+                        {% for payment_type in payment_types %}
+                            <option value="{{ payment_type }}">{{ payment_type }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
+                
                 <div class="col-md-1">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </form>
 
-        <!-- Display Added Data -->
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Expense Type</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                    <th>Payment Type</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for expense in expenses %}
-                <tr>
-                    <td>{{ expense.expense_date }}</td>
-                    <td>{{ expense.expense_type }}</td>
-                    <td>{{ expense.expense_description }}</td>
-                    <td>{{ expense.expense_amount }}</td>
-                    <td>{{ expense.expense_pay_type }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+
+  <!-- Display Added Data -->
+  <table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Expense Type</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Payment Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for expense, store_name in expenses %}
+            <tr>
+                <td>{{ expense.expense_date }}</td>
+                <td>{{ expense.expense_type }}</td>
+                <td>{{ expense.expense_description }}</td>
+                <td>{{ expense.expense_amount }}</td>
+                <td>{{ expense.expense_pay_type }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
 </body>
 {% endblock %}
-
