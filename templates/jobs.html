@@ -1,7 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h3>Welcome to Jobs page</h3>
-
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Job Openings</h1>
+    <div class="row">
+        {% for job in job_openings %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <h6 class="text-muted">{{ job.company }}</h6>
+                    <p class="card-text mt-3"><strong>Location:</strong> {{ job.location }}</p>
+                    <p class="card-text"><strong>Job Type:</strong> {{ job.job_type }}</p>
+                    <a href="{{ url_for('main.apply_job', job_id=job.id) }}" class="btn btn-primary">Apply Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

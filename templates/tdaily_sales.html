@@ -3,93 +3,83 @@
 {% block title %}Daily Sales{% endblock %}
 
 {% block content %}
-<h1>Daily Sales</h1>
+<div class="container py-4">
+    <h2 class="text-center mb-4 font-weight-bold text-primary">Daily Sales</h2>
 
-<div class="container">
-    <form method="POST" action="/tdaily_sales">
-        <div class="container-box">
-            <table class="table table-bordered">
-                <tbody>
-                    <tr>
-                        <td>
-                            <select class="form-control" id="select_month" name="selected_month">
-                                <option value="1">January</option>
-                                <option value="2">February</option>
-                                <!-- Add options for all 12 months -->
-                            </select>
-                        </td>
-                        <td>
-                            <select class="form-control" id="select_year" name="selected_year">
-                                <option value="2024">2024</option>
-                                <option value="2023">2023</option>
-                                <!-- Add options for the desired range of years -->
-                            </select>
-                        </td>
-                        <td>
-                            <select class="form-control" name="selected_store" id="store-selector">
-                                <option value="" disabled selected>Select Store</option>
-                                {% for store in user_stores %}
-                                    <option value="{{ store.id }}">
-                                        {{ store.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>                            
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- Form for Daily Sales Input -->
+    <div class="row justify-content-md-center mb-4">
+        <div class="col-md-10">
+            <form method="POST" action="/tdaily_sales">
+                {{ form.csrf_token }}
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5 class="card-title">Select Date and Store</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                {{ form.selected_month.label(class="form-label") }}
+                                {{ form.selected_month(class="form-control") }}
+                            </div>
+                            <div class="form-group col-md-4">
+                                {{ form.selected_year.label(class="form-label") }}
+                                {{ form.selected_year(class="form-control") }}
+                            </div>
+                            <div class="form-group col-md-4">
+                                {{ form.selected_store.label(class="form-label") }}
+                                {{ form.selected_store(class="form-control") }}
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
-    </form>
-    
-    
+    </div>
+
+    <!-- Display Daily Sales Data -->
     <div class="row">
-        <div class="col-md-12">
-            <div class="highlight-box form-box">
-                <h3>Daily Sales Data</h3>
-                <div class="container-box">
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>Date</th>
-                                <th>Total Sales Day</th>
-                                <th>Card Total Day</th>
-                                <th>Drop Total Day</th>
-                                <th>Lotto Payout Day</th>
-                                <th>Payout1 Day</th>
-                                <th>Payout2 Day</th>
-                                <th>Over/Short</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for sale in daily_sales_data %}
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Daily Sales Data</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-dark">
                                 <tr>
-                                    <td>{{ sale.date.strftime('%Y-%m-%d') }}</td>
-                                    <td>{{ sale.total_sales_day }}</td>
-                                    <td>{{ sale.card_total_day }}</td>
-                                    <td>{{ sale.drop_total_day }}</td>
-                                    <td>{{ sale.lotto_payout_day }}</td>
-                                    <td>{{ sale.payout1_day }}</td>
-                                    <td>{{ sale.payout2_day }}</td>
-                                    <td>{{ sale.over_short }}</td>
+                                    <th>Date</th>
+                                    <th>Total Sales Day</th>
+                                    <th>Card Total Day</th>
+                                    <th>Drop Total Day</th>
+                                    <th>Lotto Payout Day</th>
+                                    <th>Payout1 Day</th>
+                                    <th>Payout2 Day</th>
+                                    <th>Over/Short</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for sale in daily_sales_data %}
+                                    <tr>
+                                        <td>{{ sale.date.strftime('%Y-%m-%d') }}</td>
+                                        <td>{{ sale.total_sales_day }}</td>
+                                        <td>{{ sale.card_total_day }}</td>
+                                        <td>{{ sale.drop_total_day }}</td>
+                                        <td>{{ sale.lotto_payout_day }}</td>
+                                        <td>{{ sale.payout1_day }}</td>
+                                        <td>{{ sale.payout2_day }}</td>
+                                        <td>{{ sale.over_short }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        // JavaScript to prevent the selected store from reverting after form submission
-        document.addEventListener('DOMContentLoaded', function() {
-            const storeSelector = document.getElementById('store-selector');
-            const selectedStoreId = "{{ selected_store_id }}"; // Get the selected_store_id from the template
-    
-            storeSelector.value = selectedStoreId; // Set the selected value to match the selected_store_id
-        });
-    </script>
 </div>
 {% endblock %}

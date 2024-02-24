@@ -1,122 +1,378 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="content"
-<div class="container mt-3">
-    <h2 class="text-center">Lottery Data Input</h2>
-    <div class="row">
-        <!-- Column for the input table -->
-        <div class="col-md-5">
-            <div class="highlight">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th class="w-25">SN</th>
-                                <th class="w-25">Amount</th>
-                                <th class="w-25">Begin Day</th>
-                                <th class="w-25">End Day</th>
-                                <th class="w-25">Sold</th>
-                                <th class="w-25">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tbody>
-                                {% for sn in range(1, 41) %}
-                                <tr>
-                                    <td>{{ sn }}</td>
-                                    <td><input type="number" class="form-control amount" placeholder="Amount"></td>
-                                    <td><input type="number" class="form-control begin-day" placeholder="Begin Day"></td>
-                                    <td><input type="number" class="form-control end-day" placeholder="End Day"></td>
-                                    <td class="sold">0</td> <!-- Sold will be calculated -->
-                                    <td class="total">0</td> <!-- Total will be calculated -->
-                                </tr>
-                                {% endfor %}
-                            </tbody>                        </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="5" class="text-right">Grand Total</td>
-                                    <td class="grand-total">0</td>
-                                </tr>
-                                <tr>
-                                    <!-- colspan attribute should match the number of columns in your table -->
-                                    <td colspan="6" class="text-center">
-                                        <button id="add-row" class="btn btn-primary">Add Row</button>
-                                        <button id="remove-row" class="btn btn-danger">Remove Row</button>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                            
-                    </table>
+<div class="container mt-2">
+    <form method="POST" action="{{ url_for('terminal.lottery_input') }}" class="needs-validation form-border-main" novalidate>
+        <h3 style="text-align: center; font-weight: bold; text-decoration: underline;">Daily Lottery Input Form</h3>
+        {{ form.hidden_tag() }}
+        {{ day_lottery_form.hidden_tag() }}
+
+        <div class="row">
+            <!-- Left Side Column -->
+            <div class="col-md-6">
+                <!-- Date and Store Selector Section -->
+                <div class="mb-4 form-border">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Date and Store Selection</h5>
+                            <!-- Expense Date Field -->
+                            <div class="mb-3">
+                                {{ form.expense_date(class="form-control", id="selected_date", placeholder="Date") }}
+                                {% if form.expense_date.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.expense_date.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+                            <!-- Selected Store Field -->
+                            <div class="mb-3">
+                                {{ form.selected_store(class="form-control", id="selected_store", placeholder="Selected Store") }}
+                                {% if form.selected_store.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.selected_store.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Day Lottery Entry Section -->
+                <div class="mb-4 form-border-alt">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Day Lottery Entry</h5>
+                            <!-- Total Scratch Off Field -->
+                            <div class="mb-3 row">
+                                <label for="day_lottery_total_scratch_off" class="col-md-4 col-form-label text-end">Total Scratch Off</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="day_lottery_total_scratch_off" name="total_scratch_off">
+                                </div>
+                            </div>
+                            <!-- Total Online Field -->
+                            <div class="mb-3 row">
+                                <label for="day_lottery_total_online" class="col-md-4 col-form-label text-end">Total Online</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="day_lottery_total_online" name="total_online">
+                                </div>
+                            </div>
+                            <!-- Actual Total Field -->
+                            <div class="mb-3 row">
+                                <label for="day_lottery_actual_total" class="col-md-4 col-form-label text-end">Actual Total</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="day_lottery_actual_total" name="actual_total">
+                                </div>
+                            </div>
+                            <!-- POS Sale Field -->
+                            <div class="mb-3 row">
+                                <label for="day_lottery_pos_sale" class="col-md-4 col-form-label text-end">POS Sale</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="day_lottery_pos_sale" name="pos_sale">
+                                </div>
+                            </div>
+                            <!-- Over/Short Field -->
+                            <div class="mb-3 row">
+                                <label for="day_lottery_over_short" class="col-md-4 col-form-label text-end">Over/Short</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="day_lottery_over_short" name="over_short">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Overwrite and Submit Button Section -->
+                <div>
+                    <div class="form-border">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Overwrite Checkbox -->
+                                    <div class="col-md-8">
+                                        <div class="form-check mb-3">
+                                            {{ form.overwrite(class="form-check-input", id="overwrite") }}
+                                            {{ form.overwrite.label(class="form-check-label ms-2", for="Select Overwrite to resubmit data") }}
+                                        </div>
+                                    </div>
+                                    <!-- Submit Button -->
+                                    <div class="col-md-4 d-flex align-items-end justify-content-end">
+                                        <button type="submit" class="btn btn-outline-primary btn-lg btn-block">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
+            <!-- Right Side Column -->
+            
+            <div class="col-md-6">
+                <!-- Lottery Entry Form Section with Form Border -->
+                <div class="form-border-alt">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Lottery Entry Form</h5>
+                            <!-- Table for Lottery Entries -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Amount</th>
+                                            <th>Begin Day</th>
+                                            <th>End Day</th>
+                                            <th>Sold</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for entry_form in form.entries %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td>{{ entry_form.amount(class="form-control") }}</td>
+                                            <td>{{ entry_form.begin_day(class="form-control") }}</td>
+                                            <td>{{ entry_form.end_day(class="form-control") }}</td>
+                                            <td>{{ entry_form.sold(class="form-control") }}</td>
+                                            <td>{{ entry_form.total(class="form-control") }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>           
         </div>
+    </form>
+</div>
 
-<!-- This div will create the gap in the middle -->
-        <div class="col-md-2"></div> 
 
-        <!-- Right Table -->
-    <div class="col-md-5">
-    <div class="highlight">
-        <h3>Lottery Day</h3>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
+
+<!-- 31 Day Lottery Report here -->
+
+    <div class="container mt-5"> <!-- Adds margin on the top (mt-4 = margin-top: 1.5rem;) -->
+        <h3 style="text-align: center; font-weight: bold; text-decoration: underline;">31 Day Lottery Report  </h3>
+        <div class="table-responsive"> <!-- Responsive table wrapper -->
+            <table class="table table-hover table-bordered"> <!-- Bootstrap table with hover effect -->
+                <thead class="thead-light"> <!-- Light-colored table header -->
                     <tr>
-                        <th>Item</th>
-                        <th>Value</th>
+                        <th>Date</th>
+                        <th>Total Scratch Off</th>
+                        <th>Total Online</th>
+                        <th>Actual Total</th>
+                        <th>POS Sale</th>
+                        <th>Over/Short</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for entry in entries %}
                     <tr>
-                        <td>Total POS</td>
-                        <td><input type="number" class="form-control" id="total-pos"></td>
+                        <td>{{ entry.date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ entry.total_scratch_off }}</td>
+                        <td>{{ entry.total_online }}</td>
+                        <td>{{ entry.actual_total }}</td>
+                        <td>{{ entry.pos_sale }}</td>
+                        <td>{{ entry.over_short }}</td>
                     </tr>
+                    {% else %}
                     <tr>
-                        <td>Scratch Off</td>
-                        <td><input type="number" class="form-control" id="scratch-off"></td>
+                        <td colspan="6">No entries found.</td>
                     </tr>
-                    <tr>
-                        <td>Lotto Online</td>
-                        <td><input type="number" class="form-control" id="lotto-online"></td>
-                    </tr>
-                    <tr>
-                        <td>Payout Total</td>
-                        <td><input type="number" class="form-control" id="payout-total"></td>
-                    </tr>
-                    <tr>
-                        <td>Total (POS - Scratch Off - Lotto Online)</td>
-                        <td id="calculated-total">0</td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="col-12">
-        <div class="highlight p-3">
-            <h3>Lotto, Payout, and Commissions</h3>
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <td>Lotto Online</td>
-                        <td><input type="number" class="form-control" id="lotto-online"></td>
-                    </tr>
-                    <tr>
-                        <td>Payout Total</td>
-                        <td><input type="number" class="form-control" id="payout-total"></td>
-                    </tr>
-                    <tr>
-                        <td>Commissions</td>
-                        <td><input type="number" class="form-control" id="commissions"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+
+
 </div>
-</div>
-</div>
-</div>
-</div>
-<script src="{{ url_for('static', filename='calculate_lottery.js') }}"></script>
+
+
+
+
+
+<!-- scripts here -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ticketsPerRoll = {
+            "1": 150,
+            "2": 125,
+            "3": 75,
+            "5": 75,
+            "10": 50,
+            "20": 25,
+            "30": 20,
+            "50": 20,
+            "100": 15
+        };
+    
+        function calculateSoldAndTotal(index) {
+            const amountInput = document.querySelector(`input[name="entries-${index}-amount"]`);
+            const beginDayInput = document.querySelector(`input[name="entries-${index}-begin_day"]`);
+            const endDayInput = document.querySelector(`input[name="entries-${index}-end_day"]`);
+            const soldInput = document.querySelector(`input[name="entries-${index}-sold"]`);
+            const totalInput = document.querySelector(`input[name="entries-${index}-total"]`);
+    
+            // Calculate Sold
+            const amount = parseFloat(amountInput.value) || 0;
+            const beginDay = parseInt(beginDayInput.value, 10) || 0;
+            const endDay = parseInt(endDayInput.value, 10) || 0;
+            const rollSize = ticketsPerRoll[amount.toString()] || 0;
+    
+            let sold = 0;
+            if (rollSize > 0) {
+                if (endDay === beginDay) {
+                    sold = 0;
+                } else if (endDay > beginDay) {
+                    sold = endDay - beginDay;
+                } else {
+                    sold = ((rollSize + 1 - beginDay) + (endDay - 1));
+                }
+            }
+            soldInput.value = sold;
+    
+            // Calculate Total
+            const total = sold * amount;
+            totalInput.value = total.toFixed(2);
+    
+            // Call calculateFinancials to update the financials based on the latest values
+            calculateFinancials();
+        }
+    
+        // New function to calculate "Total Scratch Off", "Actual Total", and "Over/Short"
+        function calculateFinancials() {
+            let totalScratchOff = 0;
+            for (let i = 0; i < 40; i++) {
+                const totalInput = document.querySelector(`input[name="entries-${i}-total"]`);
+                if (totalInput) { // Check if the input exists to avoid errors
+                    const totalValue = parseFloat(totalInput.value) || 0;
+                    totalScratchOff += totalValue;
+                }
+            }
+    
+            // Update "Total Scratch Off"
+            document.getElementById('day_lottery_total_scratch_off').value = totalScratchOff.toFixed(2);
+    
+            // Perform additional calculations for "Actual Total" and "Over/Short"
+            updateActualTotalAndOverShort();
+        }
+    
+        function updateActualTotalAndOverShort() {
+            const totalScratchOff = parseFloat(document.getElementById('day_lottery_total_scratch_off').value) || 0;
+            const totalOnline = parseFloat(document.getElementById('day_lottery_total_online').value) || 0;
+            const posSale = parseFloat(document.getElementById('day_lottery_pos_sale').value) || 0;
+    
+            const actualTotal = totalScratchOff + totalOnline;
+            document.getElementById('day_lottery_actual_total').value = actualTotal.toFixed(2);
+    
+            const overShort = posSale - actualTotal;
+            document.getElementById('day_lottery_over_short').value = overShort.toFixed(2);
+        }
+    
+        // Attach event listeners for calculating sold and total tickets
+        for (let i = 0; i < 40; i++) {
+            document.querySelector(`input[name="entries-${i}-begin_day"]`)?.addEventListener('input', () => calculateSoldAndTotal(i));
+            document.querySelector(`input[name="entries-${i}-end_day"]`)?.addEventListener('input', () => calculateSoldAndTotal(i));
+            document.querySelector(`input[name="entries-${i}-amount"]`)?.addEventListener('input', () => calculateSoldAndTotal(i));
+        }
+    
+        // Attach event listeners for calculating financials directly
+        document.getElementById('day_lottery_total_online')?.addEventListener('input', updateActualTotalAndOverShort);
+        document.getElementById('day_lottery_pos_sale')?.addEventListener('input', updateActualTotalAndOverShort);
+    
+        // Call to update financials on page load in case inputs are pre-populated
+        calculateFinancials();
+    });
+    </script>
+    
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const storeSelect = document.getElementById('selected_store');
+        const dateField = document.getElementById('selected_date');
+    
+        function fetchData() {
+    const storeId = storeSelect.value;
+    const expenseDate = dateField.value;
+    if (!storeId || !expenseDate) {
+        console.log("Store ID or Date is not selected.");
+        return; // Do nothing if either is not selected
+    }
+
+    // Adding a cache-busting timestamp parameter
+    fetch(`/fetch-data?store_id=${storeId}&date=${expenseDate}&_=${new Date().getTime()}`)
+        .then(response => response.json())
+        .then(data => {
+            // Clear previous values
+            for (let i = 0; i < 40; i++) {
+                document.querySelector(`input[name="entries-${i}-amount"]`).value = '';
+                document.querySelector(`input[name="entries-${i}-begin_day"]`).value = '';
+                document.querySelector(`input[name="entries-${i}-end_day"]`).value = '';
+                document.querySelector(`input[name="entries-${i}-sold"]`).value = '';
+                document.querySelector(`input[name="entries-${i}-total"]`).value = '';
+            }
+
+            // Populate new values from the fetched data
+            data.entries.forEach((entry, index) => {
+        const prefix = `entries-${index}`; // Based on zero-based indexing
+        document.querySelector(`input[name="${prefix}-amount"]`).value = entry.amount || 0;
+        document.querySelector(`input[name="${prefix}-begin_day"]`).value = entry.begin_day || 0;  // Correctly applies 'begin_day' as sent from the server
+        document.querySelector(`input[name="${prefix}-end_day"]`).value = entry.end_day || 0;
+        document.querySelector(`input[name="${prefix}-sold"]`).value = entry.sold || 0;
+        document.querySelector(`input[name="${prefix}-total"]`).value = entry.total || 0;
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+    
+        // Add event listeners to trigger data fetching on changes
+        storeSelect.addEventListener('change', fetchData);
+        dateField.addEventListener('change', fetchData);
+    });
+    </script>
+
+
+
+<!-- Day Lottery Entry scripts here -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Ensure these selectors match your actual HTML form.
+    const storeSelect = document.getElementById('selected_store');
+    const dateField = document.getElementById('selected_date');
+
+    function fetchDayLotteryData() {
+        const storeId = storeSelect.value;
+        const date = dateField.value;
+
+        fetch(`/fetch_day_lottery_data?store_id=${storeId}&date=${date}`)
+        .then(response => response.json())
+        .then(data => {
+            // Ensure these field IDs match those in your form.
+            document.getElementById('day_lottery_total_scratch_off').value = data.total_scratch_off || '';
+            document.getElementById('day_lottery_total_online').value = data.total_online || '';
+            document.getElementById('day_lottery_actual_total').value = data.actual_total || '';
+            document.getElementById('day_lottery_pos_sale').value = data.pos_sale || '';
+            document.getElementById('day_lottery_over_short').value = data.over_short || '';
+        })
+        .catch(error => console.error('Error fetching day lottery data:', error));
+    }
+
+    // Trigger on store or date change
+    storeSelect.addEventListener('change', fetchDayLotteryData);
+    dateField.addEventListener('change', fetchDayLotteryData);
+
+    // Optionally, trigger on page load if default values are set
+    fetchDayLotteryData();
+});
+
+
+</script>
+   
+<!-- Day Lottery Entry scripts for calculating here -->
+
+
+    
+    
 {% endblock %}

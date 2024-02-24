@@ -3,131 +3,121 @@
 {% block title %}Total Monthly Expenses{% endblock %}
 
 {% block content %}
-    <h1>Total Monthly Expenses</h1>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Total Monthly Expenses Overview</h2>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="highlight-box form-box">
-                    <h3>Select Month and Year</h3>
-                    <form method="POST" action="/texpenses">
-                        <div class="container-box">
-                            <table class="table table-bordered">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <select class="form-control" id="select_month" name="selected_month">
-                                                <option value="1">January</option>
-                                                <option value="2">February</option>
-                                                <!-- Add options for all months -->
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select class="form-control" id="select_year" name="selected_year">
-                                                <option value="2024">2024</option>
-                                                <option value="2023">2023</option>
-                                                <!-- Add options for desired years -->
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select class="form-control" name="selected_store" id="store-selector">
-                                                <option value="" disabled>Select Store</option>
-                                                {% for store in user_stores %}
-                                                    <option value="{{ store.id }}" {% if store.id == selected_store_id %}selected{% endif %}>
-                                                        {{ store.name }}
-                                                    </option>
-                                                {% endfor %}
-                                            </select>
-                                        </td>
-                                                                     
-                                        
-                                        <td>
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+    <!-- Selector Form and Summary -->
+    <div class="row justify-content-center mb-4">
+        <!-- Month and Year Selector -->
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    Select Month, Year, and Store
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/texpenses" class="row g-3">
+                        {{ form.hidden_tag() }} <!-- CSRF Token -->
+                        <div class="col-md-3">
+                            {{ form.selected_month.label(class="form-label") }}
+                            {{ form.selected_month(class="form-control") }}
+                        </div>
+                        <div class="col-md-3">
+                            {{ form.selected_year.label(class="form-label") }}
+                            {{ form.selected_year(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.selected_store.label(class="form-label") }}
+                            {{ form.selected_store(class="form-control") }}
+                        </div>
+                        <div class="col-md-2 d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
                         </div>
                     </form>
                 </div>
             </div>
-            <!-- Total Monthly box -->
-            <div class="col-md-6">
-                <div class="highlight-box form-box">
-                    <h3>Total Monthly Expenses</h3>
-                    <div class="container-box">
-                        <table class="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td>Total:</td>
-                                    <td id="total-monthly-expenses">${{ total_monthly_expenses }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="highlight-box form-box">
-                    <h3>Expenses by Expense Type</h3>
-                    <div class="container-box">
-                        <table class="table table-bordered">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Expense Type</th>
-                                    <th>Total Expenses</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for expense_type, total_amount in expenses_by_type.items() %}
-                                    <tr>
-                                        <td>{{ expense_type }}</td>
-                                        <td>${{ total_amount }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+
+        <!-- Total Monthly Expenses Summary -->
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    Total Monthly Expenses
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="highlight-box form-box">
-                    <h3>Expenses by Payment Type</h3>
-                    <div class="container-box">
-                        <table class="table table-bordered">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Payment Type</th>
-                                    <th>Total Expenses</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for payment_type, total_amount in expenses_by_payment_type.items() %}
-                                    <tr>
-                                        <td>{{ payment_type }}</td>
-                                        <td>${{ total_amount }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="card-body text-center">
+                    <h4 id="total-monthly-expenses">${{ total_monthly_expenses }}</h4>
                 </div>
             </div>
         </div>
     </div>
 
- 
+    <!-- Detailed Expenses Overview -->
+    <div class="row">
+        <!-- Expenses by Expense Type -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    Expenses by Expense Type
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Expense Type</th>
+                                <th>Total Expenses</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expense_type, total_amount in expenses_by_type.items() %}
+                            <tr>
+                                <td>{{ expense_type }}</td>
+                                <td>${{ total_amount }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-    <script>
-        // JavaScript to prevent the selected store from reverting after form submission
-        document.addEventListener('DOMContentLoaded', function() {
-            const storeSelector = document.getElementById('store-selector');
-            const selectedStoreId = "{{ selected_store_id }}"; // Get the selected_store_id from the template
+        <!-- Expenses by Payment Type -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    Expenses by Payment Type
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Payment Type</th>
+                                <th>Total Expenses</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment_type, total_amount in expenses_by_payment_type.items() %}
+                            <tr>
+                                <td>{{ payment_type }}</td>
+                                <td>${{ total_amount }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    // JavaScript to prevent the selected store from reverting after form submission
+    document.addEventListener('DOMContentLoaded', function() {
+        const storeSelector = document.getElementById('store-selector');
+        const selectedStoreId = "{{ selected_store_id }}"; // Get the selected_store_id from the template
     
-            storeSelector.value = selectedStoreId; // Set the selected value to match the selected_store_id
-        });
-    </script>
-
+        storeSelector.value = selectedStoreId; // Set the selected value to match the selected_store_id
+    });
+</script>
 {% endblock %}

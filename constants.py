@@ -3,7 +3,7 @@
 
 # constants.py
 
-expense_types = ['Paycheck', 'Employee Credit', 'Refund', 'Misc', 'Fee/Legal', 'Utilities', 'Tax' ]
+expense_types = ['Paycheck', 'Lottery', 'Employee Credit', 'Refund', 'Misc', 'Fee/Legal', 'Utilities', 'Taxes' ]
 
 payment_types = ['Cash', 'Card', 'Payable', 'Check', 'Store']
 

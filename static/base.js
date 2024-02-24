@@ -47,3 +47,26 @@ function getCookie(name) {
     }
     return null;
 }
+
+
+
+//Script for back button//
+
+  function goBack() {
+      window.history.back();
+  }
+
+
+// Script for alerts//
+document.addEventListener('DOMContentLoaded', (event) => {
+    // Wait for the DOM to be fully loaded
+    const alerts = document.querySelectorAll('.alert-dismissible');
+    alerts.forEach((alert) => {
+        // Set timeout to 2 seconds for each alert
+        setTimeout(() => {
+            // Use Bootstrap's method to close the alert
+            new bootstrap.Alert(alert).close();
+        }, 2000); // 2000 milliseconds = 2 seconds
+    });
+});
+

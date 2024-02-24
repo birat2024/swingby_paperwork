@@ -1,67 +1,27 @@
-      <!-- Section 2: Work Schedule and hours worked -->
-      <div class="row">
-        <!-- Section 2: Work Schedule -->
-        <div class="col-md-4">
-            <h2>2. Work Schedule</h2>
-            <table class="table">
-            <tr>
-                <th>Day</th>
-                <th>Shift</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-            </tr>
-            <tr>
-                <td>Monday</td>
-                <td>Morning</td>
-                <td>8:00 AM</td>
-                <td>12:00 PM</td>
-            </tr>
-            <!-- Add more rows for other days and shifts -->
-            </table>
-        </div>
-
-    <!-- Section 3: Hours Worked -->
-    <div class="col-md-4">
-        <h2>3. Hours Worked</h2>
-        <table class="table">
-            <tr>
-                <th>Week</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Total Hours</th>
-            </tr>
-            <tr>
-                <td>Week 1</td>
-                <td>Jan 1, 2024</td>
-                <td>Jan 7, 2024</td>
-                <td>40 hours</td>
-            </tr>
-            <!-- Add more rows for other weeks -->
-        </table>
+<form method="POST" action="">
+    {{ form.hidden_tag() }} <!-- CSRF token for form protection -->
+    <!-- Add your fields here -->
+    <div class="mb-3">
+        {{ form.total_scratch_off.label(class="form-label") }}
+        {{ form.total_scratch_off(class="form-control") }}
     </div>
-</div>
-
-<!-- Section 4: Payroll Information -->
-<div class="col-md-4">
-    <h2>4. Payroll Information</h2>
-    <table class="table">
-    <tr>
-        <th>Hourly Wage</th>
-        <td>$15.00</td>
-    </tr>
-    <tr>
-        <th>Overtime Pay</th>
-        <td>$22.50</td>
-    </tr>
-    <tr>
-        <th>Bonuses</th>
-        <td>$100.00</td>
-    </tr>
-    <tr>
-        <th>Total Earnings</th>
-        <td>$1,000.00</td>
-    </tr>
-    <!-- You can add more rows for other payroll details -->
-</table>
-</div>
-</div>
+    <div class="mb-3">
+        {{ form.total_online.label(class="form-label") }}
+        {{ form.total_online(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.actual_total.label(class="form-label") }}
+        {{ form.actual_total(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.pos_sale.label(class="form-label") }}
+        {{ form.pos_sale(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.over_short.label(class="form-label") }}
+        {{ form.over_short(class="form-control") }}
+    </div>
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>

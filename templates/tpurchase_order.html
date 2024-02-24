@@ -3,80 +3,61 @@
 {% block title %}Total Monthly Purchases{% endblock %}
 
 {% block content %}
-<h1>Total Monthly Purchases</h1>
+<div class="container py-4">
+    <h2 class="mb-4 text-center font-weight-bold">Total Monthly Purchases</h2>
 
-<div class="container">
-    <div class="row">
-        <!-- Select Month and Year -->
-        <div class="col-md-6">
-            <div class="highlight-box form-box">
-                <h3>Select Month and Year</h3>
-                <form method="POST" action="/tpurchase_order">
-                    <div class="container-box">
-                        <table class="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <select class="form-control" id="select_month" name="selected_month">
-                                            <option value="1">January</option>
-                                            <option value="2">February</option>
-                                            <!-- Add options for all months -->
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-control" id="select_year" name="selected_year">
-                                            <option value="2024">2024</option>
-                                            <option value="2023">2023</option>
-                                            <!-- Add options for desired years -->
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-control" name="selected_store" id="store-selector">
-                                            <option value="" disabled selected>Select Store</option>
-                                            {% for store in user_stores %}
-                                                <option value="{{ store.id }}">
-                                                    {{ store.name }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>                                        
-                                    </td>
-                                    <td>
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </form>
+    <!-- Selector Row -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Select Month, Year, and Store</h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/tpurchase_order" class="row g-3">
+                        {{ form.csrf_token }}
+                        <div class="col-md-4">
+                            {{ form.selected_month(class="form-control", id="select_month") }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.selected_year(class="form-control", id="select_year") }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.selected_store(class="form-control", id="store-selector") }}
+                        </div>
+                        <div class="col-md-8">
+                            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-
-        <!-- Total Monthly Purchases -->
-        <div class="col-md-6">
-            <div class="highlight-box form-box">
-                <h3>Total Monthly Purchases</h3>
-                <div class="container-box">
-                    <table class="table table-bordered">
-                        <tbody>
-                            <tr>
-                                <td>Total:</td>
-                                <td id="total-monthly-purchase">{{ total_monthly_purchases }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <!-- Total Monthly Purchases Card -->
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Total Monthly Purchases</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <h4>Total: ${{ total_monthly_purchases }}</h4>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Purchases Overview Row -->
     <div class="row">
-        <!-- Purchases by Payment Type -->
-        <div class="col-md-4">
-            <div class="highlight-box form-box">
-                <h3>Purchases by Payment Type</h3>
-                <div class="container-box">
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
+        <!-- Purchases by Payment Type Card -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Purchases by Payment Type</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
                             <tr>
                                 <th>Payment Type</th>
                                 <th>Total Purchases</th>
@@ -84,10 +65,10 @@
                         </thead>
                         <tbody>
                             {% for payment_type, total_purchase in purchases_by_payment_type.items() %}
-                                <tr>
-                                    <td>{{ payment_type }}</td>
-                                    <td>${{ total_purchase }}</td>
-                                </tr>
+                            <tr>
+                                <td>{{ payment_type }}</td>
+                                <td>${{ total_purchase }}</td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -95,40 +76,79 @@
             </div>
         </div>
 
-       <!-- Purchases by Vendor -->
-        <!-- Purchases by Vendor -->
-<div class="col-md-8">  <!-- Adjusted to full width for clarity -->
-    <div class="highlight-box form-box">
-        <h3>Purchases by Vendor</h3>
-        <div class="container-box">
-            <table class="table table-bordered">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Vendor Name</th>
-                        <th>Total Purchases</th>
-                        {% for pt in purchase_types %}  <!-- Dynamically create headers for each purchase type -->
-                            <th>{{ pt }} Purchases</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for vendor in vendor_purchases %}
-                        <tr>
-                            <td>{{ vendor.vendor_name }}</td>
-                            <td>{{ vendor.total_purchase }}</td>
-                            {% for pt in purchase_types %}  <!-- Dynamically create data columns for each purchase type -->
+        <!-- Purchases by Vendor Card -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Purchases by Vendor</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Vendor Name</th>
+                                <th>Total Purchases</th>
+                                {% for pt in purchase_types %}
+                                <th>{{ pt }} Purchases</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vendor in vendor_purchases %}
+                            <tr>
+                                <td>{{ vendor.vendor_name }}</td>
+                                <td>${{ vendor.total_purchase }}</td>
+                                {% for pt in purchase_types %}
                                 <td>{{ vendor[pt] }}</td>
+                                {% endfor %}
+                            </tr>
                             {% endfor %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-
+<!-- Purchase Order Table Section -->
+{% if purchase_orders %}
+<div class="row">
+    <!-- Bulk Update Button -->
+    <div class="mt-4">
+        <a href="{{ url_for('terminal.po_edit') }}" class="btn btn-primary">Bulk Update Purchase Orders</a>
     </div>
+    <div class="col-md-12">
+        <h3>Purchase Orders</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>PO Number</th>
+                    <th>Vendor Name</th>
+                    <th>Invoice Total</th>
+                    <th>Payment Method</th>
+                    <th>Received By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in purchase_orders %}
+                <tr>
+                    <td>{{ order.date }}</td>
+                    <td>{{ order.po_number }}</td>
+                    <td>{{ order.vendor_name }}</td>
+                    <td>${{ order.invoice_total }}</td>
+                    <td>{{ order.payment_method }}</td>
+                    <td>{{ order.received_by }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+
     <script>
         // JavaScript to prevent the selected store from reverting after form submission
         document.addEventListener('DOMContentLoaded', function() {

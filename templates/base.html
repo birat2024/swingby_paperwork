@@ -1,133 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Keep only the latest Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script defer src="{{ url_for('static', filename='base.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Move the following CDN links outside of the container div -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"></script>
-    <!-- Popper.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.min.js"></script>
-
     <title>Swing By Home</title>
 </head>
-
 <body>
-    <!-- Navbar -->
-<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Your Brand</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/main_terminal">Terminal</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard">Dashboard</a>
-                </li>
+    
+
+    <!-- Top Bar -->
+    <div class="topbar">
+        <div class="topbar-nav">
+            <div class="d-flex justify-content-between" style="gap: 15px;"> <!-- Adjust the gap size as needed -->
+                <button id="sidebarCollapse" class="btn btn-dark btn-lg" aria-label="Toggle sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
                 
-            </ul>
+                <button id="sidebarBack" class="btn btn-dark btn-lg" style="margin-right: 10px;" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+            
+            
+            <!-- No margin-right for the last item -->
+            
+            <!-- More links with icons -->
+        </div>
+        <div class="topbar-right">
+            <!-- Conditionally display login or logout -->
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle text-blue" type="button" id="storeDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-store store-icon"></i>
+                    {% if current_user.is_authenticated %}
+                        {% if get_selected_store_for_user(current_user) %}
+                            <span>{{ get_selected_store_for_user(current_user).name }}</span>
+                        {% else %}
+                            <span>Select Store</span>
+                        {% endif %}
+                    {% else %}
+                        <span>Guest</span>
+                    {% endif %}
+                </button>
+                {% if current_user.is_authenticated %}
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="storeDropdown">
+                        {% for store in current_user.stores.all() %}
+                            <li><a class="dropdown-item {% if get_selected_store_for_user(current_user) and store.id == get_selected_store_for_user(current_user).id %}active{% endif %} text-white" href="{{ url_for('users.select_store', store_id=store.id) }}">{{ store.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+        
+    </div>
+    
+    
+
+    
+
+
+
+
+
+
+
+
+
+    <!-- Flex container for sidebar and main content -->
+    <div class="main-container">
+        <!-- Sidebar -->
+            {% include 'sidebar.html' %}
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <style>
+                #alert-container {
+            position: fixed; /* Or 'absolute' if it fits better your layout */
+            top: 10px; /* Distance from the top of the viewport */
+            left: 50%; /* Center the alerts horizontally */
+            transform: translateX(-50%); /* Adjusts the horizontal positioning to truly center it */
+            z-index: 1050; /* Ensure it's above other content */
+            width: auto;
+            max-width: 80%; /* Adjust based on your design preferences */
+        }
+        
+            </style>
+
+            <!-- Flashed Messages -->
             <div id="alert-container">
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div id="alert" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-        
-                        <script>
-                            // Auto-hide the alert after 5 seconds (5000 milliseconds)
-                            setTimeout(function() {
-                                document.getElementById('alert').style.display = 'none';
-                            }, 5000);
-                        </script>
-                    {% endfor %}
-                {% endif %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                 {% endwith %}
             </div>
-            
-            <!-- Add this code to align items to the right -->
-            <div class="navbar-nav ml-auto">
-                <!-- User's Name -->
-                {% if current_user.is_authenticated %}
-                    <span class="nav-item nav-link">{{ current_user.name }}</span>
-                {% endif %}
-                
-                <!-- Location Selector with custom styling -->
-                <div class="dropdown ml-2">
-                    <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" id="storeDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {% if current_user.is_authenticated %}
-                            {% set selected_store = get_selected_store_for_user(current_user) %}
-                            {{ selected_store.name if selected_store else 'Select Store' }}
-                        {% else %}
-                            Select Store
-                        {% endif %}
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="storeDropdown">
-                        {% if current_user.is_authenticated %}
-                            {% for store in current_user.stores.all() %}
-                                <li><a class="dropdown-item" href="{{ url_for('select_store', store_id=store.id) }}">{{ store.name }}</a></li>
-                            {% endfor %}
-                        {% else %}
-                            <li><a class="dropdown-item" href="#">No stores available</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-                
-                <!-- Add margin to create a gap between the selector and the login button -->
-                <div class="ml-3">
-                    <!-- Login Button -->
-                    {% if current_user.is_authenticated %}
-                        <a class="btn btn-outline-primary" href="{{ url_for('logout') }}">Logout</a>
-                    {% else %}
-                        <a class="btn btn-outline-primary" href="{{ url_for('login') }}">Login</a>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <!-- End of alignment to the right -->
-        </div>
-    </div>
-</nav>
 
-
-
-
-    
-    
-
-
-    <!-- Content -->
-    <div class="container">
-        {% block content %}{% endblock %}
+            {% block content %}
+                <!-- Page specific content will go here -->
+            {% endblock %}
+        </main>
     </div>
 
-    <!-- Footer and JavaScript links -->
-    <footer class="footer">
-        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Home</a></li>
-            <!-- Add more footer items if needed -->
-        </ul>
-        <p class="text-center text-body-secondary">&copy; 2023 Swing By, Inc</p>
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3">
+        <p class="text-center">&copy; 2024 Swing By, Inc</p>
     </footer>
 
-  
-</body>
+    <!-- Bootstrap Script and its dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='base.js') }}"></script>
 
+</body>
 </html>

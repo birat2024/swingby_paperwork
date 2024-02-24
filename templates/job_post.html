@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4">Post a Job Opening</h1>
+
+    <!-- Job Posting Form -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <form method="POST" action="{{ url_for('main.job_post') }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.title.label(class="form-label") }}
+                    {{ form.title(size=32, class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.company.label(class="form-label") }}
+                    {{ form.company(size=32, class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.location.label(class="form-label") }}
+                    {{ form.location(size=32, class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.job_type.label(class="form-label") }}
+                    {{ form.job_type(class="form-select") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.description.label(class="form-label") }}
+                    {{ form.description(rows=4, class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.qualifications.label(class="form-label") }}
+                    {{ form.qualifications(rows=4, class="form-control") }}
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+  
+    
+
+
+    <!-- Job Openings Table -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Company</th>
+                        <th>Location</th>
+                        <th>Job Type</th>
+                        <th>Description</th>
+                        <th>Qualifications</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in job_posts %}
+                    <tr>
+                        <td>{{ job.title }}</td>
+                        <td>{{ job.company }}</td>
+                        <td>{{ job.location }}</td>
+                        <td>{{ job.job_type }}</td>
+                        <td>{{ job.description }}</td>
+                        <td>{{ job.qualifications }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('main.delete_job', id=job.id) }}" style="display: inline;">
+                                {{ form.hidden_tag() }}
+
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

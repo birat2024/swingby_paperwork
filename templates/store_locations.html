@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <h3>Store Locations</h3>
+    
+<!-- Updated dynamic API key inclusion -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+    <style>
+        /* Add CSS styling for the map container */
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Store Locations</h1>
+    <!-- Create a div element to hold the map -->
+    <div id="map"></div>
+
+    <script>
+        // Initialize the map
+        function initMap() {
+            // Specify the coordinates for the locations
+            var locations = [
+                { lat: 32.447746, lng: -97.015119, name: 'SwingBy Maypearl' },
+                { lat: 32.642307, lng: -97.137813, name: 'SwingBy Sublett' },
+                { lat: 32.675218, lng: -97.364084, name: 'SwingBy McCart' }
+            ];
+
+            // Create a new map centered at a specific location
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 32.6, lng: -97.2 }, // Adjust the center as needed
+                zoom: 10 // Adjust the zoom level as needed
+            });
+
+            // Iterate through the locations and add markers to the map
+            for (var i = 0; i < locations.length; i++) {
+                var location = locations[i];
+                var marker = new google.maps.Marker({
+                    position: { lat: location.lat, lng: location.lng },
+                    map: map,
+                    title: location.name
+                });
+
+                // Add an info window with the location name
+                var infowindow = new google.maps.InfoWindow({
+                    content: location.name
+                });
+
+                // Attach an event listener to show the info window when the marker is clicked
+                marker.addListener('click', function() {
+                    infowindow.open(map, this);
+                });
+            }
+        }
+
+        // Initialize the map when the page loads
+        google.maps.event.addDomListener(window, 'load', initMap);
+    </script>
+</body>
+</html>

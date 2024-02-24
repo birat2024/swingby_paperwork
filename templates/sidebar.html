@@ -1,0 +1,274 @@
+
+
+<!-- sidebar.html -->
+
+<div id="sidebar" class="sidebar">
+
+  <!-- Navigation Links -->
+  <nav class="nav flex-column">
+
+      <!-- User Info and Logout at the bottom -->
+      <div class="mt-auto">
+        {% if current_user.is_authenticated %}
+        <!-- Display current time -->
+        <div class="nav-item nav-link mb-3">
+          <i class="fas fa-calender icon calender-icon"></i> <!-- Add custom class to the user icon -->
+          <span>{{ current_date_time.strftime('%Y-%m-%d %H:%M:%S') }}</span> <!-- Display the current date -->
+        </div>
+        <!-- User Name -->
+        <div class="nav-item nav-link mb-3">
+          <i class="fas fa-user icon user-icon"></i> <!-- Add custom class to the user icon -->
+          <span>{{ current_user.name }}</span> <!-- Display the user's name -->
+        </div>
+        {% endif %}
+      </div>
+    
+      <!-- Home Link -->
+      <a href="/" class="nav-link" style="margin-top: 0px;">
+        <i class="fas fa-home icon home-icon"></i> <!-- Add custom class to the icon -->
+        <span class="icon-text-gap">Home</span>
+      </a>
+
+      {% if current_user.is_authenticated %}
+      <!-- Add margin between links -->
+      <div class="nav-link" style="margin-top: 10px;" id="dailySalesToggle">
+        <i class="fas fa-money-bill-wave icon fa-money-bill-wave"></i> <!-- Add custom class to the icon -->
+        <span class="icon-text-gap">DailyPaperwork</span>
+      </div>
+      <!-- Add margin between links -->
+      <div id="dailySalesOptions" style="display: none; margin-top: 5px;">
+        <ul class="submenu">
+          <li><a class="dropdown-item" href="{{ url_for('terminal.expenses') }}">Expenses</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('terminal.lottery_input') }}">Lottery</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('terminal.dailysales') }}">Paperwork</a></li>
+        </ul>
+      </div>
+    
+      <!-- Add margin between links -->
+      <div class="nav-link" style="margin-top: 10px;" id="inventoryToggle">
+        <i class="fas fa-warehouse icon inventory-icon"></i> <!-- Add custom class to the icon -->
+        <span class="icon-text-gap">Inventory</span>
+      </div>
+      <!-- Add margin between links -->
+      <div id="inventoryOptions" style="display: none; margin-top: 5px;">
+        <ul class="submenu">
+          <li><a class="dropdown-item" href="{{ url_for('terminal.purchase_order') }}">Purchases</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('terminal.store_transfer') }}">Transfers</a></li>
+          <li><a class="dropdown-item" href="#">Reports</a></li>
+        </ul>
+      </div>
+    
+      <!-- Add margin between links -->
+      <div class="nav-link" id="employeeToggle">
+        <i class="fas fa-users icon employee-icon"></i> <!-- Add custom class to the icon -->
+        <span class="icon-text-gap">Employee</span>
+      </div>
+      <div id="employeeOptions" style="display: none;">
+        <ul class="submenu">
+          <li><a class="dropdown-item" href="{{ url_for('terminal.employee') }}">Central</a></li>
+          <li><a class="dropdown-item" href="#">Option 2</a></li>
+          <li><a class="dropdown-item" href="#">Option 3</a></li>
+        </ul>
+      </div>
+        
+      
+      <div class="nav-link" id="reportsToggle" style="position: relative;">
+        <i class="fas fa-chart-line icon reports-icon"></i> <!-- Add custom class to the icon -->
+        <span class="icon-text-gap">Reports</span>
+        <div id="reportsOptions" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0;">
+            <ul class="submenu">
+                <li><a class="dropdown-item" href="{{ url_for('terminal.temployee') }}">employee-icon</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('terminal.monthly_lottery') }}">Lottery Month</a></li>
+                <li><a class="dropdown-item" href="#">Option 3</a></li>
+            </ul>
+        </div>
+    </div>
+    
+      
+
+      {% endif %}
+    
+      {% if current_user.is_authenticated %}
+      
+      <!-- Add margin between links -->
+      <a href="/monthly_paperwork" class="nav-link" style="margin-top: 10px;">
+        <i class="fas fa-terminal icon terminal-icon"></i> <!-- Add custom class to the icon -->
+        <span class="icon-text-gap">Monthly Paperwork</span>
+      </a>
+      <!-- Add margin between links -->
+      <a href="/dashboard" class="nav-link" style="margin-top: 10px;">
+        <i class="fas fa-chart-bar icon dashboard-icon"></i> <!-- Add custom class to the icon -->
+        <span class="icon-text-gap">Dashboard</span>
+      </a>
+      <!-- Add margin between links -->
+      <a href="/settings" class="nav-link" style="margin-top: 10px;">
+        <i class="fas fa-cog icon cog-icon"></i> <!-- Add custom class to the icon -->
+        <span class="icon-text-gap">Settings</span>
+      </a>
+      {% endif %}
+    </nav>
+    
+    <!-- Login/Logout Button -->
+  <div class="bottom-button">
+      {% if current_user.is_authenticated %}
+      <!-- Logout Button -->
+      <a href="/logout" class="nav-link">
+          <i class="fas fa-sign-out-alt icon"></i> <!-- Add custom class to the icon -->
+          <span class="icon-text-gap">Logout</span>
+      </a>
+      {% else %}
+      <!-- Login Button -->
+      <a href="/login" class="nav-link">
+          <i class="fas fa-sign-in-alt icon"></i> <!-- Add custom class to the icon -->
+          <span class="icon-text-gap">Login</span>
+      </a>
+      {% endif %}
+    </div>
+    
+
+</div>
+
+<!-- Style For Login Button -->
+<style>
+  /* Default styles for the bottom button */
+ .bottom-button {
+     position: fixed;
+     bottom: 0;
+     width: 80px; /* Default width for smaller screens */
+     transition: width 0.3s ease; /* Add transition for smooth animation */
+ }
+ 
+ /* Styles for larger screens when the sidebar is not collapsed */
+ .sidebar:not(.collapsed) .bottom-button {
+     width: 200px; /* Width for larger screens when sidebar is not collapsed */
+ }
+ 
+ /* Hover effect */
+ .bottom-button:hover {
+     opacity: 0.7;
+ }
+ 
+ /* Media query for smaller screens */
+ @media screen and (max-width: 768px) {
+     .sidebar:not(.collapsed) .bottom-button {
+         width: 80px; /* Reset width for smaller screens when sidebar is collapsed */
+     }
+ }
+ 
+ </style>
+   
+
+<style>
+  .submenu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.submenu li {
+    padding-left: 1em; /* Indentation for subitems */
+}
+
+.submenu a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ </style>
+
+
+ <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var sidebarCollapse = document.getElementById('sidebarCollapse');
+    var sidebar = document.getElementById('sidebar');
+    var topbar = document.querySelector('.topbar'); // Get the topbar element
+    var content = document.querySelector('.main-content');
+    var dropdownToggle = document.querySelectorAll('.nav-link.dropdown-toggle');
+    var rootStyle = document.documentElement.style; // Access to root style to change CSS variables
+
+    // Function to adjust topbar based on sidebar state and screen width
+    function adjustTopbar(sidebarCollapsed) {
+        var sidebarWidth = sidebarCollapsed ? '80px' : '200px';
+        rootStyle.setProperty('--sidebar-width', sidebarWidth);
+        if (topbar) {
+            topbar.style.left = sidebarWidth;
+            topbar.style.width = `calc(100% - ${sidebarWidth})`;
+        }
+    }
+
+    sidebarCollapse.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        var isCollapsed = sidebar.classList.contains('collapsed');
+        
+        // Adjust the topbar when the sidebar is collapsed or expanded
+        adjustTopbar(isCollapsed);
+        
+        // Toggle the 'expanded' class on the main content when the sidebar is collapsed
+        content.classList.toggle('expanded', isCollapsed);
+        
+        // Close any open dropdown menus when collapsing the sidebar
+        if (isCollapsed) {
+            dropdownToggle.forEach(function(item) {
+                var dropdownMenu = item.nextElementSibling;
+                if (dropdownMenu.classList.contains('show')) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+        }
+    });
+
+    // Initial adjustment in case the sidebar starts as collapsed
+    adjustTopbar(sidebar.classList.contains('collapsed'));
+
+    // Your existing resize and submenu toggle code...
+
+
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            // If the window is resized to be wider than 768px and the sidebar is collapsed, expand it
+            sidebar.classList.remove('collapsed');
+            content.classList.remove('expanded');
+        } else {
+            // If the window is resized to be narrower than 768px and the sidebar is not collapsed, collapse it
+            sidebar.classList.add('collapsed');
+            content.classList.add('expanded');
+        }
+    });
+
+    // Handle click events for dropdown toggles
+    dropdownToggle.forEach(function(item) {
+        item.addEventListener('click', function(event) {
+            event.preventDefault();
+            var dropdownMenu = this.nextElementSibling;
+            dropdownMenu.classList.toggle('show');
+        });
+    });
+});
+ </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    function toggleSubMenu(toggleId, optionsId) {
+        var toggle = document.getElementById(toggleId);
+        var options = document.getElementById(optionsId);
+
+        toggle.addEventListener('click', function() {
+            options.style.display = options.style.display === 'none' ? 'block' : 'none';
+        });
+    }
+
+    // Call the function for DailySales submenu
+    toggleSubMenu('dailySalesToggle', 'dailySalesOptions');
+
+    // Call the function for Inventory submenu
+    toggleSubMenu('inventoryToggle', 'inventoryOptions');
+
+    // Call the function for Inventory submenu
+    toggleSubMenu('employeeToggle', 'employeeOptions');
+
+     // Call the function for Reports submenu
+     toggleSubMenu('reportsToggle', 'reportsOptions');
+});
+</script>

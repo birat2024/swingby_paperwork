@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Selector field -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card border-primary mb-3">
+                    <div class="card-header">Select Options</div>
+                    <div class="card-body">
+                        <form method="POST" class="form-border">
+                            {{ form.hidden_tag() }}
+                            <div class="form-group row">
+                                <div class="col">
+                                    {{ form.month.label }} {{ form.month(class="form-control") }}
+                                </div>
+                                <div class="col">
+                                    {{ form.year.label }} {{ form.year(class="form-control") }}
+                                </div>
+                                <div class="col">
+                                    {{ form.store_id.label }} {{ form.store_id(class="form-control") }}
+                                </div>
+                                <div class="col">
+                                    <button type="submit" class="btn btn-primary">Generate Report</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lottery Transactions Table -->
+            <div class="col-md-6">
+                <div class="card border-primary mb-3">
+                    <div class="card-header">Lottery Transactions</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in lottery_expense_entries %}
+                                    <tr>
+                                        <td>{{ entry.date.strftime('%Y-%m-%d') }}</td>
+                                        <td>{{ entry.amount }}</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="2">No lottery transactions found.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Lottery and Day entry totals -->
+        <div class="row">
+            <!-- Lottery totals -->
+            <div class="col-md-6">
+                <div class="card border-primary mb-3">
+                    <div class="card-header">Lottery Totals</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td>Total Sales</td>
+                                        <td><input type="text" class="form-control" placeholder="{{ total_sales }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Commissions</td>
+                                        <td><input type="text" class="form-control" placeholder="{{ commissions }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Paid</td>
+                                        <td><input type="text" class="form-control" placeholder="{{ total_paid }}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Difference</td>
+                                        <td><input type="text" class="form-control" placeholder="{{ difference }}" readonly></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <!-- Day entry totals -->
+            <div class="col-md-6">
+        <div class="card border-primary mb-3">
+            <div class="card-header">Day Entry Totals</div>
+            <div class="card-body">
+                <p class="text-lg mb-4">Total Scratch Off: {{ total_scratch_off }}</p>
+                <p class="text-lg mb-4">Total Online: {{ total_online }}</p>
+                <p class="text-lg mb-4">Total Actual: {{ total_actual }}</p>
+                <p class="text-lg mb-4">Total POS Sale: {{ total_pos_sale }}</p>
+                <p class="text-lg mb-4">Total Over/Short: {{ total_over_short }}</p>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </div>
+
+        <!-- Table for displaying entries -->
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Store</th>
+                        <th>Total Scratch Off</th>
+                        <th>Total Online</th>
+                        <th>Actual Total</th>
+                        <th>POS Sale</th>
+                        <th>Over/Short</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ entry.store.name }}</td>
+                        <td>{{ entry.total_scratch_off }}</td>
+                        <td>{{ entry.total_online }}</td>
+                        <td>{{ entry.actual_total }}</td>
+                        <td>{{ entry.pos_sale }}</td>
+                        <td>{{ entry.over_short }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No entries found for the selected month and store.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+</div>
+{% endblock %}

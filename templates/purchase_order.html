@@ -1,55 +1,93 @@
 {% extends "base.html" %}
 
 {% block content %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchase Orders</title>
-</head>
-<body>
-    <div class="container">
-        <h3>Purchase Orders</h3>
+<div class="container mt-5"> <!-- Adds margin on the top -->
+    <h3 style="text-align: center; font-weight: bold; text-decoration: underline;">Purchase Order</h3>
 
-        <!-- Input Form -->
-        <form method="POST">
-            <div class="row mb-3">
-                <!-- Add form fields for entering purchase order details -->
-                <div class="col-md-2">
-                    <input type="date" name="date" class="form-control" placeholder="Date" required>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" name="po_number" class="form-control" placeholder="PO Number" required>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" name="vendor_name" class="form-control" placeholder="Vendor Name" required>
-                </div>
-                <div class="col-md-2">
-                    <input type="number" name="invoice_total" class="form-control" placeholder="Invoice Total" step="0.01" required>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" name="payment_method" class="form-control" placeholder="Payment Method" required>
-                </div>
-                <div class="col-md-1">
-                    <input type="text" name="received_by" class="form-control" placeholder="Received By" required>
-                </div>
-                <div class="col-md-2">
-                    <!-- Add the store selector as a dropdown -->
-                    <select name="store_id" class="form-control" required>
-                        <option value="" disabled>Select Store</option>
-                        {% for store in stores %}
-                            <option value="{{ store.id }}" {% if store.id == default_store %}selected{% endif %}>{{ store.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-1">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </div>
-        </form>
+    <!-- Input Form inside a Card for better styling -->
+    <div class="card form-border-main">
+        <div class="card-body">
+            <form method="POST">
+                {{ form.hidden_tag() }}  <!-- CSRF Token -->
 
-        <!-- Display Added Purchase Orders -->
-        <table class="table">
-            <thead>
+                <div class="row">
+                    <!-- Purchase Order Date Field -->
+                    <div class="col-md-4 mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Date</span>
+                            </div>
+                            {{ form.date(class="form-control", placeholder="Select Date") }}
+                        </div>
+                    </div>
+
+                    <!-- PO Number Field -->
+                    <div class="col-md-4 mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">PO Number</span>
+                            </div>
+                            {{ form.po_number(class="form-control", placeholder="Enter PO Number") }}
+                        </div>
+                    </div>
+
+                    <!-- Vendor Name Field -->
+                    <div class="col-md-4 mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Vendor Name</span>
+                            </div>
+                            {{ form.vendor_name(class="form-control", placeholder="Enter Vendor Name") }}
+                        </div>
+                    </div>
+
+                    <!-- Invoice Total Field -->
+                    <div class="col-md-4 mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Invoice Total</span>
+                            </div>
+                            {{ form.invoice_total(class="form-control", placeholder="Enter Invoice Total") }}
+                        </div>
+                    </div>
+
+                    <!-- Payment Method Field -->
+                    <div class="col-md-4 mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Payment Method</span>
+                            </div>
+                            {{ form.payment_method(class="form-control custom-select") }}
+                        </div>
+                    </div>
+
+                    <!-- Received By Field -->
+                    <div class="col-md-4 mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Received By</span>
+                            </div>
+                            {{ form.received_by(class="form-control", placeholder="Enter Received By") }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Display Added Data inside a Table -->
+    <div class="mt-4">
+        <table class="table table-striped table-hover table-bordered"> <!-- Bootstrap table with striped, hover, and bordered effects -->
+            <thead class="thead-light"> <!-- Light-colored table header -->
                 <tr>
                     <th>Date</th>
                     <th>PO Number</th>
@@ -61,17 +99,17 @@
             </thead>
             <tbody>
                 {% for purchase_order in purchase_orders %}
-                <tr>
-                    <td>{{ purchase_order.date }}</td>
-                    <td>{{ purchase_order.po_number }}</td>
-                    <td>{{ purchase_order.vendor_name }}</td>
-                    <td>{{ purchase_order.invoice_total }}</td>
-                    <td>{{ purchase_order.payment_method }}</td>
-                    <td>{{ purchase_order.received_by }}</td>
-                </tr>
+                    <tr>
+                        <td>{{ purchase_order.date }}</td>
+                        <td>{{ purchase_order.po_number }}</td>
+                        <td>{{ purchase_order.vendor_name }}</td>
+                        <td>{{ purchase_order.invoice_total }}</td>
+                        <td>{{ purchase_order.payment_method }}</td>
+                        <td>{{ purchase_order.received_by }}</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-</body>
+</div>
 {% endblock %}

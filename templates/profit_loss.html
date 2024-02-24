@@ -1,86 +1,160 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h3>Profit and Loss</h3>
-
-    <!-- Manual Selection Form -->
-    <form method="POST">
-        <div class="row mb-3">
-            <div class="col-md-2">
-                <select name="selected_month" class="form-control" required>
-                    <option value="1">January</option>
-                    <option value="2">February</option>
-                    <!-- Add options for other months -->
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select name="selected_year" class="form-control" required>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <!-- Add options for other years -->
-                </select>
-            </div>
-            <div class="col-md-2">
-                <!-- Add the store selector as a dropdown, similar to other pages -->
-                <select name="selected_store" class="form-control" required>
-                    <option value="" disabled>Select Store</option>
-                    {% for store in user_stores %}
-                        <option value="{{ store.id }}">{{ store.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary">Calculate</button>
-            </div>
-        </div>
-    </form>
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-6">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Total P/L</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Total Revenue</td>
-                        <td>{{ total_revenue }}</td>
-                    </tr>
-                    <tr>
-                        <td>Total Purchases</td>
-                        <td>{{ total_purchases }}</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <select name="expense_type" class="form-control">
-                                <option value="all">All Expenses</option>
-                                {% for expense_type, total_expense in total_expenses_by_type.items() %}
-                                    <option value="{{ expense_type }}">{{ expense_type }} (Total: {{ total_expense }})</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td>{{ total_expenses }}</td>
-                    </tr>
-                    
-                                       
-                    <tr>
-                        <td>Profit/Loss</td>
-                        <td>{{ profit_loss }}</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Selection Fields and Profit/Loss Summary -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4>Generate Report</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" class="row g-3">
+                        {{ form.hidden_tag() }}
+                        <div class="col-md-4">
+                            {{ form.selected_month.label }} {{ form.selected_month(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.selected_year.label }} {{ form.selected_year(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.selected_store.label }} {{ form.selected_store(class="form-control") }}
+                        </div>
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <h4>Total In/Out</h4>
-            <ul>
-                <li>Total Revenue: {{ total_revenue }}</li>
-                <li>Total Purchases: {{ total_purchases }}</li>
-                <li>Total Expenses: {{ total_expenses }}</li>
-                <li>Profit/Loss: {{ profit_loss }}</li>
-            </ul>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4>Net Profit/Loss Summary</h4>
+                </div>
+                <div class="card-body">
+                    <p>Total Revenue: ${{ monthly_total_sales|round(2) }}</p>
+                    <p>Net Transfer: 
+                        {% if overall_balance >= 0 %}
+                            Owed ${{ overall_balance|round(2) }}
+                        {% else %}
+                            Owes ${{ overall_balance|abs|round(2) }}
+                        {% endif %}
+                    </p>
+
+                    <p>Total Expenses: ${{ total_expenses|round(2) }}</p>
+                    <p>Excluding Payables: ${{ total_monthly_purchase_payable|round(2) }}</p>
+                    
+                    <p>
+                        {% if net_profit_loss >= 0 %}
+                        <span class="text-success"><strong>Net Profit:</strong> ${{ net_profit_loss|round(2) }}</span>
+                        {% else %}
+                        <span class="text-danger"><strong>Net Loss:</strong> ${{ net_profit_loss|abs|round(2) }}</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Detailed Sections -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4>Monthly Revenue</h4>
+                </div>
+                <div class="card-body">
+                    <p>Total Sales: ${{ monthly_total_sales|round(2) }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4>Expenses Summary</h4>
+                </div>
+                <div class="card-body">
+                    <p>Total Expenses: ${{ total_expenses|round(2) }}</p>
+                    <p>Excluding Payables: ${{ total_monthly_purchase_payable|round(2) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if net_transfers %}
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4>Net Transfers</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Partner Store</th>
+                                <th>Net Balance</th>
+                                <th>Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transfer in net_transfers %}
+                            <tr>
+                                <td>{{ transfer.partner_store }}</td>
+                                <td>${{ transfer.net_balance|round(2) }}</td>
+                                <td>{{ transfer.comment }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p class="text-end"><strong>Overall Balance: </strong>
+                        {% if overall_balance >= 0 %}
+                            Owed ${{ overall_balance|round(2) }}
+                        {% else %}
+                            Owes ${{ overall_balance|abs|round(2) }}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Purchases and Expenses by Type -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4>Purchases by Payment Type</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        {% for type, amount in purchases_by_payment_type.items() %}
+                        <li>{{ type }}: ${{ amount|round(2) }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4>Expenses by Type</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        {% for type, amount in expenses_by_type.items() %}
+                        <li>{{ type }}: ${{ amount|round(2) }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>

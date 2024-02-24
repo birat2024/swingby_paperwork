@@ -1,46 +1,85 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Application Form</h1>
-    <form class="row g-3" method="POST" action="{{ url_for('jobapplication') }}">
+
+
+<div class="container mt-5">
+    <h1 class="mb-4">Job Application Form</h1>
+
+    <!-- Display Job Details Here -->
+    <div class="mb-4">
+        <h2>{{ job_post.title }}</h2>
+        <h5>Company: {{ job_post.company }}</h5>
+        <h5>Location: {{ job_post.location }}</h5>
+        <h5>Job Type: {{ job_post.job_type }}</h5>
+        <p>{{ job_post.description }}</p>
+        <p><strong>Qualifications:</strong> {{ job_post.qualifications }}</p>
+        <!-- Add any other job details here -->
+</div>
+
+
+<div class="container mt-5">
+    <h1 class="mb-4">Job Application Form for {{ job_post.title }}</h1>
+    <form method="POST" action="{{ url_for('main.apply_job', job_id=job_post.id) }}" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
 
-        <div class="col-md-6">
-            {{ form.name.label(class="form-label") }}
-            {{ form.name(class="form-control") }}
-            {% if form.name.errors %}
-                <!-- Display errors for name -->
-            {% endif %}
+        <div class="mb-3">
+            <label for="{{ form.full_name.id }}" class="form-label">Full Name</label>
+            {{ form.full_name(class="form-control") }}
+            {% for error in form.full_name.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
         </div>
 
-        <div class="col-md-6">
-            {{ form.education.label(class="form-label") }}
-            {{ form.education(class="form-control") }}
-            {% if form.education.errors %}
-                <!-- Display errors for education -->
-            {% endif %}
+        <div class="mb-3">
+            <label for="{{ form.email.id }}" class="form-label">Email</label>
+            {{ form.email(class="form-control") }}
+            {% for error in form.email.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
         </div>
 
-        <div class="col-12">
-            {{ form.experience.label(class="form-label") }}
-            {{ form.experience(class="form-control") }}
-            {% if form.experience.errors %}
-                <!-- Display errors for experience -->
-            {% endif %}
+        <div class="mb-3">
+            <label for="{{ form.phone_number.id }}" class="form-label">Phone Number</label>
+            {{ form.phone_number(class="form-control") }}
+            {% for error in form.phone_number.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
         </div>
 
-        <div class="col-12">
-            {{ form.reference.label(class="form-label") }}
-            {{ form.reference(class="form-control") }}
-            {% if form.reference.errors %}
-                <!-- Display errors for reference -->
-            {% endif %}
+        <div class="mb-3">
+            <label for="{{ form.education.id }}" class="form-label">Education</label>
+            {{ form.education(class="form-control", rows=4) }}
+            {% for error in form.education.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
         </div>
 
-        <!-- Add additional fields as needed -->
-
-        <div class="col-12">
-            {{ form.submit(class="btn btn-primary") }}
+        <div class="mb-3">
+            <label for="{{ form.experience.id }}" class="form-label">Experience</label>
+            {{ form.experience(class="form-control", rows=4) }}
+            {% for error in form.experience.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
         </div>
+
+        <div class="mb-3">
+            <label for="{{ form.reference.id }}" class="form-label">Reference</label>
+            {{ form.reference(class="form-control", rows=4) }}
+            {% for error in form.reference.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.resume.id }}" class="form-label">Resume</label>
+            {{ form.resume(class="form-control") }}
+            {% for error in form.resume.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+        
+
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+</div>
 {% endblock %}

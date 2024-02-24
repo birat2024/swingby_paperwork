@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-10">
+            <h2 class="mb-4">Employee Intake Form</h2>
+            <form method="POST" enctype="multipart/form-data" class="form-box">
+                {{ form.hidden_tag() }}
+
+                <!-- Personal Information -->
+                <h3>Personal Information</h3>
+                <div class="row mb-3">
+                    <div class="col-md-4">{{ form.first_name(class="form-control", placeholder="First Name") }}</div>
+                    <div class="col-md-4">{{ form.last_name(class="form-control", placeholder="Last Name") }}</div>
+                    <div class="col-md-4">{{ form.dob(class="form-control", placeholder="Date of Birth") }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">{{ form.email(class="form-control", placeholder="Email") }}</div>
+                    <div class="col-md-6">{{ form.phone(class="form-control", placeholder="Phone") }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">{{ form.address(class="form-control", placeholder="Address") }}</div>
+                </div>
+
+                <!-- Employment Type -->
+                <h3>Employment Type</h3>
+                <div class="row mb-3">
+                    <div class="col-md-12">{{ form.employment_type(class="form-control") }}</div>
+                </div>
+
+                <!-- Educational Background -->
+                <h3>Educational Background</h3>
+                <div class="row mb-3">
+                    <div class="col-md-4">{{ form.degree(class="form-control", placeholder="Degree / Course") }}</div>
+                    <div class="col-md-4">{{ form.university(class="form-control", placeholder="University / Institute") }}</div>
+                    <div class="col-md-4">{{ form.year_of_graduate(class="form-control", placeholder="Year of Graduate") }}</div>
+                </div>
+                <!-- ... other fields following the same pattern ... -->
+
+                {{ form.submit(class="btn btn-primary mt-3") }}
+            </form>
+        </div>
+        
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Forms</h2>
+                    {% for file in form_files %}
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <a href="{{ url_for('static', filename='employeeforms/' ~ file) }}" target="_blank">{{ file }}</a>
+                            </div>
+                            <div class="col-md-2">
+                                <form action="{{ url_for('upload_form') }}" method="post" enctype="multipart/form-data">
+                                    <input type="file" name="file">
+                                    <button type="submit" class="btn btn-primary btn-sm">Upload</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+         <!-- Download Column -->
+         <div class="col-md-1">
+            <a href="{{ url_for('static', filename='employeeforms/' ~ file) }}" target="_blank">{{ file }}</a>
+        </div>
+        
+        <!-- Upload Column -->
+        <div class="col-md-1">
+            
+        </div>
+</div>
+{% endblock %}

@@ -1,54 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}Total Transfers and Store Owes{% endblock %}
+{% block title %}Total Transfers and Store Overview{% endblock %}
 
 {% block content %}
-<div class="container">
-    <!-- Select Month and Year -->
+<div class="container py-4">
+    <!-- Selector Form Row -->
     <div class="row">
-        <div class="col-md-6">
-            <div class="highlight-box form-box">
-                <h3>Select Month and Year</h3>
-                <form method="POST" action="/tstore_transfer">
-                    <div class="container-box">
-                        <table class="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <select class="form-control" id="select_month" name="selected_month">
-                                            <option value="1">January</option>
-                                            <option value="2">February</option>
-                                            <!-- Add options for all months -->
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-control" id="select_year" name="selected_year">
-                                            <option value="2024">2024</option>
-                                            <option value="2023">2023</option>
-                                            <!-- Add options for desired years -->
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </form>
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Select Month, Year, and Store</h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/tstore_transfer">
+                        {{ form.hidden_tag() }}
+                        <div class="form-row align-items-center">
+                            <div class="col-auto">
+                                {{ form.selected_month.label(class="sr-only") }}
+                                {{ form.selected_month(class="form-control mb-2", placeholder="Month") }}
+                            </div>
+                            <div class="col-auto">
+                                {{ form.selected_year.label(class="sr-only") }}
+                                {{ form.selected_year(class="form-control mb-2", placeholder="Year") }}
+                            </div>
+                            <div class="col-auto">
+                                {{ form.selected_store.label(class="sr-only") }}
+                                {{ form.selected_store(class="form-control mb-2", placeholder="Store") }}
+                            </div>
+                            <div class="col-auto">
+                                {{ form.submit(class="btn btn-primary mb-2") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Total Transfers and Store Owes (Side by Side) -->
+    <!-- Row for Side-by-Side Cards -->
     <div class="row">
-        <!-- Total Transfers -->
-        <div class="col-md-6">
-            <div class="highlight-box form-box">
-                <h3>Total Transfers</h3>
-                <div class="container-box">
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
+        <!-- Total Transfers by Store Combination -->
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Total Transfers by Store Combination</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-responsive-sm table-hover">
+                        <thead class="thead-light">
                             <tr>
                                 <th>Transferred From</th>
                                 <th>Transferred To</th>
@@ -56,12 +55,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for transfer in total_transfers %}
-                                <tr>
-                                    <td>{{ transfer.transferred_from }}</td>
-                                    <td>{{ transfer.transferred_to }}</td>
-                                    <td>{{ transfer.total_transfer }}</td>
-                                </tr>
+                            {% for total in transfer_totals %}
+                            <tr>
+                                <td>{{ total.transferred_from_name }}</td>
+                                <td>{{ total.transferred_to_name }}</td>
+                                <td>${{ total.total_amount }}</td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -69,35 +68,77 @@
             </div>
         </div>
 
-        <!-- Store Owes -->
-    <div class="col-md-6">
-        <div class="highlight-box form-box">
-            <h3>Store Owes</h3>
-            <div class="container-box">
-                <table class="table table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Store</th>
-                            <th>Owes to Store</th>
-                            <th>Total Owed Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for from_store, to_stores in store_owes.items() %}
-                            {% for to_store, total_owed in to_stores.items() %}
-                                <tr>
-                                    <td>{{ from_store }}</td>
-                                    <td>{{ to_store }}</td>
-                                    <td>{{ total_owed }}</td>
-                                </tr>
+        <!-- Net Balances with Other Stores -->
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Net Balances with Other Stores</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-responsive-sm table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Partner Store</th>
+                                <th>Net Balance</th>
+                                <th>Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transfer in net_transfers %}
+                            <tr>
+                                <td>{{ transfer.partner_store }}</td>
+                                <td>${{ transfer.net_balance }}</td>
+                                <td>{{ transfer.comment }}</td>
+                            </tr>
                             {% endfor %}
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Monthly Store Transfer History Full Width Row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Monthly Store Transfer History</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-responsive-sm table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Date</th>
+                                <th>Transfer Number</th>
+                                <th>Transferred From</th>
+                                <th>Transferred To</th>
+                                <th>Amount</th>
+                                <th>Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if transfers %}
+                                {% for transfer in transfers %}
+                                <tr>
+                                    <td>{{ transfer.date }}</td>
+                                    <td>{{ transfer.transfer_number }}</td>
+                                    <td>{{ transfer.transferred_from_store.name }}</td>
+                                    <td>{{ transfer.transferred_to_store.name }}</td>
+                                    <td>${{ transfer.amount }}</td>
+                                    <td>{{ transfer.remark }}</td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6">No transfers found for the selected month and store.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

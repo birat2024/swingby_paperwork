@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .dashboard-card {
+        background-color: rgb(31, 100, 109); /* Dark background */
+        border-radius: 10px; /* Rounded edges */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Shadow for depth */
+        transition: transform .2s; /* Smooth transform on hover */
+        height: 200px; /* Double the height */
+        width: calc(100% - 80px); /* Reduce width */
+    }
+    .dashboard-card:hover {
+        transform: scale(1.05); /* Slight increase in size on hover */
+    }
+    .dashboard-card .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around; /* This will give space above and below the items */
+    align-items: center;
+    height: 100%; /* Make sure the card body fills the entire card */
+    }
+
+    .dashboard-card a {
+        color: #ffffff; /* Light text color for readability */
+        text-decoration: none;
+        line-height: normal; /* or 1; Adjust as needed */
+    }
+    .dashboard-card .fa-icon {
+        font-size: 6rem; /* Large icon size */
+        margin-bottom: 20px; /* Increase bottom margin to push the icon down */
+    }
+</style>
+<div class="container mt-4">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col d-flex justify-content-center">
+            <div class="dashboard-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-icon"></i>
+                    <a href="{{ url_for('terminal.tdaily_sales') }}" class="stretched-link">Monthly Sales</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Repeat for each dashboard item, adjusting the href and icons as needed -->
+        <!-- Example for Monthly Expenses -->
+        <div class="col d-flex justify-content-center">
+            <div class="dashboard-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-money-bill-wave fa-icon"></i>
+                    <a href="{{ url_for('terminal.texpenses') }}" class="stretched-link">Monthly Expenses</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add more cards as per your requirements -->
+
+    </div> <!-- End of row -->
+</div> <!-- End of container -->
+<div class="container mt-4">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Monthly Sales -->
+        <div class="col">
+            <div class="card h-100 bg-light border-0">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('terminal.tdaily_sales') }}" class="stretched-link text-success" style="font-size: 1.5rem; text-decoration: none;">Monthly Sales</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Expenses -->
+        <div class="col">
+            <div class="card h-100 bg-light border-0">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('terminal.texpenses') }}" class="stretched-link text-secondary" style="font-size: 1.5rem; text-decoration: none;">Monthly Expenses</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly PO -->
+        <div class="col">
+            <div class="card h-100 bg-light border-0">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('terminal.tpurchase_order') }}" class="stretched-link text-secondary" style="font-size: 1.5rem; text-decoration: none;">Monthly PO</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Transfer -->
+        <div class="col">
+            <div class="card h-100 bg-light border-0">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('terminal.tstore_transfer') }}" class="stretched-link text-secondary" style="font-size: 1.5rem; text-decoration: none;">Monthly Transfer</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Lottery -->
+        <div class="col">
+            <div class="card h-100 bg-light border-0">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('terminal.monthly_lottery') }}" class="stretched-link text-secondary" style="font-size: 1.5rem; text-decoration: none;">Monthly Lottery</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee -->
+        <div class="col">
+            <div class="card h-100 bg-light border-0">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('terminal.temployee') }}" class="stretched-link text-secondary" style="font-size: 1.5rem; text-decoration: none;">Employee</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly PL -->
+        <div class="col">
+            <div class="card h-100 bg-light border-0">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('terminal.profit_loss') }}" class="stretched-link text-primary" style="font-size: 1.5rem; text-decoration: none;">Monthly PL</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="col">
+            <div class="card h-100 bg-light border-0">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('terminal.dashboard') }}" class="stretched-link text-warning" style="font-size: 1.5rem; text-decoration: none;">Dashboard</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Misc -->
+        <div class="col">
+            <div class="card h-100 bg-light border-0">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('terminal.misc') }}" class="stretched-link text-info" style="font-size: 1.5rem; text-decoration: none;">Misc</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jobs -->
+        <div class="col">
+            <div class="card h-100 bg-light border-0">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('main.job_post') }}" class="stretched-link text-secondary" style="font-size: 1.5rem; text-decoration: none;">Jobs</a>
+                </div>
+            </div>
+        </div>
+    </div> <!-- End of row -->
+</div> <!-- End of container -->
+{% endblock %}

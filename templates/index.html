@@ -1,19 +1,267 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Homepage - Swing By Home</title>
+        <!-- Bootstrap CSS for styling -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <style>
+            /* Add custom CSS for specific padding on top */
+            .custom-padding-top {
+                padding-top: 20px; /* Adjust this value as needed */
+            }
+        </style>
+    </head>
+    <body>
+            <style>
+                .image-scroll-box {
+                width: 100%;
+                overflow: hidden;
+                position: relative;
+            }
 
-{% block content %}
+            #rotating-image {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
 
- 
-<div class="container">
-    <h1 class="text-center mt-2 mb-4">Swing By Career</h1>
-    <div class="row" style="margin-bottom:16px">
-        <div class="col-md-6">
-            <p class="lead">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lacinia quis vel eros donec ac odio tempor. Morbi leo urna molestie at elementum eu facilisis. Pretium viverra suspendisse potenti nullam. Vivamus arcu felis bibendum ut tristique et egestas quis. Ac turpis egestas sed tempus urna et pharetra pharetra. Morbi tempus iaculis urna id volutpat lacus. Non enim praesent elementum facilisis leo. Lacus viverra vitae congue eu consequat. Elit pellentesque habitant morbi tristique senectus et netus et malesuada. Iaculis urna id volutpat lacus laoreet. Non nisi est sit amet facilisis magna etiam tempor. Ultricies mi eget mauris pharetra. Sodales ut eu sem integer. Vestibulum morbi blandit cursus risus at. Dapibus ultrices in iaculis nunc sed augue lacus viverra vitae. Turpis cursus in hac habitasse platea. Vel eros donec ac odio tempor. Diam ut venenatis tellus in metus vulputate eu. Enim neque volutpat ac tincidunt.
-            </p>
-        </div>
-        <div class="d-none d-md-block col-md-6">
-            <img src="static/officeemployee.jpg" style="height:320px; border-radius:4px;">
-        </div>
-    </div>
-</div>
-{% endblock %}
+            </style>
+                <!-- Top Bar -->
+                <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+                    <div class="container-fluid">
+                        <!-- Navbar brand (optional) -->
+                
+                        <!-- Toggle button for small screens -->
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        
+                        
+                
+                        <!-- Navbar links -->
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                                <!-- Home Link -->
+                                <li class="nav-item">
+                                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                                </li>
+                                <!-- Dashboard Link -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                                </li>
+                            </ul>
+                            
+                            <!-- Login/Logout Button -->
+                            <div class="d-flex">
+                                {% if current_user.is_authenticated %}
+                                <!-- Logout Button -->
+                                <a class="btn btn-outline-light me-2" href="{{ url_for('users.logout') }}" id="logoutButton">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
+                                </a>
+                                {% else %}
+                                <!-- Login Button -->
+                                <a class="btn btn-outline-light" href="{{ url_for('users.login') }}" id="loginButton">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    <span>Login</span>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+                
+                
+                
+                
+                
+                
+               
+                
+                
+                
+
+            <div class="container custom-padding-top">
+
+                <div class="containe ">
+                    <div class="row">
+                        <!-- Image Slideshow Box -->
+                        <div class="col-md-6">
+                            <div class="box aspect-ratio-16-9">
+                                <div class="image-wrapper">
+                                    <!-- Corrected the ID and initial src attribute -->
+                                    <img id="rotating-image" src="{{ url_for('static', filename='indeximages/default.jpg') }}" alt="Rotating Image" class="img-fluid">
+                                    <!-- Floating banner with a link to main.jobs.html -->
+                                    <a href="{{ url_for('main.job_listings') }}" class="floating-banner">
+                                        <p>Checkout our products</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                
+                        <!-- Placeholder Box for Promotion Content -->
+                        <div class="col-md-6">
+                            <div class="box aspect-ratio-16-9">
+                                <div class="image-wrapper">
+                                    <!-- Image with id for JavaScript to target -->
+                                    <img id="rotating-promotion-image" src="{{ url_for('static', filename='indexpromotions/default.jpg') }}" alt="Promotion Image" class="img-fluid">
+                        
+                                    <!-- Floating banner with a link to main.jobs.html -->
+                                    <a href="{{ url_for('main.job_listings') }}" class="floating-banner">
+                                        <p>Hot Deals!</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="container">
+                    <div class="row">
+                        <!-- Map Container -->
+                        <div class="col-md-6">
+                            <div class="box aspect-ratio-16-9">
+                                <div class="image-wrapper">
+                                    <div id="map"></div>  
+                                </div>
+                            </div>
+                        </div>
+                
+                        <!-- Image Container -->
+                        <div class="col-md-6">
+                            <div class="box aspect-ratio-16-9">
+                            <div class="image-wrapper">
+                                <a href="{{ url_for('main.job_listings') }}">
+                                    <img src="{{ url_for('static', filename='joinourteam.jpeg') }}" alt="Join Our Team" class="img-fluid">
+                                </a>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+                    <!-- Google Maps Section -->
+
+                    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initMap" async defer></script>
+
+                    <script>
+                        var map;
+                        var placesService;
+                        var bounds;
+                    
+                        function initMap() {
+                            map = new google.maps.Map(document.getElementById('map'), {
+                                center: { lat: 0, lng: 0 }, // This will be updated
+                                zoom: 10
+                            });
+                    
+                            placesService = new google.maps.places.PlacesService(map);
+                            bounds = new google.maps.LatLngBounds();
+                    
+                            // Array of your place IDs
+                            var placeIDs = [
+                                'ChIJ80yny6_5ToYRGp5bsC4VPPo',
+                                'ChIJ78MNjrLvToYRtroWlH5gzcU',
+                                'ChIJywZlUMNtToYRpRmKAb17RmQ',
+                                'ChIJhwKMOWZlToYRST64Mh1Iblk'
+                            ];
+                    
+                            placeIDs.forEach(function(placeID) {
+                                addPlaceMarker(placeID);
+                            });
+                        }
+                    
+                        function addPlaceMarker(placeID) {
+                            placesService.getDetails({
+                                placeId: placeID
+                            }, function(place, status) {
+                                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                    var marker = new google.maps.Marker({
+                                        map: map,
+                                        position: place.geometry.location
+                                    });
+                    
+                                    var infowindow = new google.maps.InfoWindow({
+                                        content: '<div><strong>' + place.name + '</strong><br>' +
+                                                place.formatted_address + '</div>'
+                                    });
+                    
+                                    marker.addListener('click', function() {
+                                        infowindow.open(map, marker);
+                                    });
+                    
+                                    // Extend the bounds object with each marker's position
+                                    bounds.extend(marker.getPosition());
+                                    map.fitBounds(bounds); // Adjust the map to fit all markers
+                                }
+                            });
+                        }
+                    </script>
+                        
+                
+                <!-- Left Image scroller -->
+                <script>
+                    var images = [];
+                    var currentIndex = 0;
+                
+                    function rotateImage() {
+                        if (currentIndex < images.length) {
+                            // Corrected the ID here to match the HTML
+                            document.getElementById('rotating-image').src = '{{ url_for("static", filename="") }}' + 'indeximages/' + images[currentIndex];
+                            currentIndex++;
+                        } else {
+                            currentIndex = 0;
+                        }
+                    }
+                
+                    fetch('{{ url_for("main.images") }}')
+                        .then(response => response.json())
+                        .then(data => {
+                            images = data.images;
+                            rotateImage();
+                            setInterval(rotateImage, 5000); // Rotate image every 10 seconds
+                        })
+                        .catch(error => console.error('Error fetching images:', error));
+                </script>
+                
+                <!-- Right Image scroller -->
+                <script>
+                    var promotionImages = [];
+                    var currentPromotionIndex = 0;
+                
+                    function rotatePromotionImage() {
+                        if (currentPromotionIndex < promotionImages.length) {
+                            document.getElementById('rotating-promotion-image').src = '{{ url_for("static", filename="") }}' + 'indexpromotions/' + promotionImages[currentPromotionIndex];
+                            currentPromotionIndex++;
+                        } else {
+                            currentPromotionIndex = 0;
+                        }
+                    }
+                
+                    fetch('{{ url_for("main.promotion_images") }}')
+                        .then(response => response.json())
+                        .then(data => {
+                            promotionImages = data.images;
+                            rotatePromotionImage();
+                            setInterval(rotatePromotionImage, 10000); // Rotate image every 10 seconds
+                        })
+                        .catch(error => console.error('Error fetching promotion images:', error));
+                </script>
+                
+
+                
+
+            </div>
+    <!-- Bootstrap Bundle with Popper for interactivity -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
+

@@ -7,133 +7,336 @@
     <title>Daily Sales Entry</title>
 </head>
 <body>
-    <div class="container">
-        <form method="POST" action="/dailysales">
+    <div class="container mt-5">
+        <form method="POST" action="{{ url_for('terminal.dailysales_submit') }}">
+            {{ form.hidden_tag() }}  <!-- CSRF token for form protection -->
             <div class="row">
                 <!-- Employee Daily Entry Section (Left) -->
                 <div class="col-md-5">
-                    <div class="highlight-box form-box">
+                    <div class="highlight-box form-box form-border-main">
                         <h3>Employee Daily Entry</h3>
-                        <div class="container-box">
-                         
+
+                        <div class="container">
+                            <!-- Row 1: Date and Store Selector -->
                             <div class="row">
-                                <!-- Date Input -->
+                                <!-- Date Selector -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="date_employee">Date:</label>
-                                        <input type="date" name="date" class="form-control" required>
+                                        {{ form.date.label(class="form-label") }}
+                                        {{ form.date(class="form-control form-control-main", placeholder="Date") }}
+                                        {% for error in form.date.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
                                     </div>
                                 </div>
+
                                 <!-- Store Selector -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="selected_store"></label>
-                                        <select name="selected_store" class="form-control" required>
-                                            <option value="" disabled>Select Store</option>
-                                            {% for store in user_stores %}
-                                                <option value="{{ store.id }}" {% if selected_store and selected_store.id == store.id %}selected{% endif %}>{{ store.name }}</option>
-                                            {% endfor %}
-                                        </select>
+                                        {{ form.selected_store.label(class="form-label") }}
+                                        {{ form.selected_store(class="form-control form-control-main", placeholder="Store Selector") }}
+                                        {% for error in form.selected_store.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
-                            
-                           
 
+                            <!-- Row 2: Employee and Hours -->
+                            <div class="row">
+                                <!-- Employee -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name_employee" class="form-label">Employee</label>
+                                        <select name="name_employee" id="name_employee" class="form-control form-control-main">
+                                            {% for employee_id, employee_name in form.name_employee.choices %}
+                                            <option value="{{ employee_id }}">{{ employee_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        {% for error in form.name_employee.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+
+                                <!-- Hours -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{ form.hours_employee.label(class="form-label") }}
+                                        {{ form.hours_employee(class="form-control form-control-main", placeholder="Hours Worked") }}
+                                        {% for error in form.hours_employee.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 3: Employee 1 and Hours 1 -->
+                            <div class="row">
+                                <!-- Employee 1 -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name_employee1" class="form-label">Employee 1</label>
+                                        <select name="name_employee1" id="name_employee1" class="form-control form-control-main">
+                                            {% for employee_id, employee_name in form.name_employee.choices %}
+                                            <option value="{{ employee_id }}">{{ employee_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        {% for error in form.name_employee1.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+
+
+
+                                <!-- Hours 1 -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{ form.hours_employee1.label(class="form-label") }}
+                                        {{ form.hours_employee1(class="form-control form-control-main", placeholder="Hours Worked") }}
+                                        {% for error in form.hours_employee1.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 4: Employee 2 and Hours 2 -->
+                            <div class="row">
+                                <!-- Employee 2 -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name_employee2" class="form-label">Employee 2</label>
+                                        <select name="name_employee2" id="name_employee2" class="form-control form-control-main">
+                                            {% for employee_id, employee_name in form.name_employee.choices %}
+                                            <option value="{{ employee_id }}">{{ employee_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        {% for error in form.name_employee2.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+
+
+
+                                <!-- Hours 2 -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{ form.hours_employee2.label(class="form-label") }}
+                                        {{ form.hours_employee2(class="form-control form-control-main", placeholder="Hours Worked") }}
+                                        {% for error in form.hours_employee2.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Bonus Checkbox -->
+                        <div class="col-md-6">
+                            <!-- Bonus Checkbox for All Employees -->
+                            <div class="form-check mt-3">
+                                {{ form.bonus_for_day(class="form-check-input") }}
+                                {{ form.bonus_for_day.label(class="form-check-label") }}
+                            </div>
+                        </div>
+
+                        <!-- Overwrite Checkbox -->
+                        <div class="form-check">
+                            {{ form.overwrite(class="form-check-input") }}
+                            {{ form.overwrite.label(class="form-check-label") }}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-3">
+                            {{ form.submit(class="btn btn-outline-success btn-lg") }}
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Add 2-column spacing -->
+                <div class="col-md-1"></div>
+
+                <!-- Daily Sales Entry Section (Right) - Reduced to 5 columns -->
+                <div class="col-md-6">
+                    <div class="highlight-box form-box form-border-main">
+                        <h3>Daily Sales Entry</h3>
+                        <div class="container-box">
                             <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td><input type="text" name="name_employee" class="form-control" placeholder="Employee Name"></td>
-                                    <td><input type="number" name="hours_employee" class="form-control" placeholder="Hours Worked"></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="text" name="name_employee1" class="form-control" placeholder="Employee 1 Name"></td>
-                                    <td><input type="number" name="hours_employee1" class="form-control" placeholder="Hours Worked (Employee 1)"></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="text" name="name_employee2" class="form-control" placeholder="Employee 2 Name"></td>
-                                    <td><input type="number" name="hours_employee2" class="form-control" placeholder="Hours Worked (Employee 2)"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <!-- Submit Button (for the entire form) -->
-                <!-- ... [other form fields] ... -->
-                <div class="text-center mt-3">
-                    <div class="form-check d-inline-block">
-                        <input class="form-check-input" type="checkbox" name="overwrite" id="overwrite">
-                        <label class="form-check-label" for="overwrite">
-                            Overwrite if entry exists
-                        </label>
-                    </div>
-                </div>
-                <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-outline-success btn-lg">Submit Daily Entry</button>
-                </div>
-        </div>
-        
-        <!-- Add some spacing between the forms -->
-        <div class="col-md-1"></div>
-
-        <!-- Daily Sales Entry Section (Right) -->
-        <div class="col-md-6">
-            <div class="highlight-box form-box">
-                <h3>Daily Sales Entry</h3>
-                <div class="container-box">
-                    <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Shift 1</th>
-                                    <th>Shift 2</th>
-                                    <th>Day</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="number" name="total_sales_shift1" class="form-control" placeholder="Total Sales Shift 1"></td>
-                                    <td><input type="number" name="total_sales_shift2" class="form-control" placeholder="Total Sales Shift 2"></td>
-                                    <td><input type="number" name="total_sales_day" class="form-control" placeholder="Total Sales Day" readonly></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="number" name="card_total_shift1" class="form-control" placeholder="Card Total Shift 1"></td>
-                                    <td><input type="number" name="card_total_shift2" class="form-control" placeholder="Card Total Shift 2"></td>
-                                    <td><input type="number" name="card_total_day" class="form-control" placeholder="Card Total Day" readonly></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="number" name="drop_total_shift1" class="form-control" placeholder="Drop Total Shift 1"></td>
-                                    <td><input type="number" name="drop_total_shift2" class="form-control" placeholder="Drop Total Shift 2"></td>
-                                    <td><input type="number" name="drop_total_day" class="form-control" placeholder="Drop Total Day" readonly></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="number" name="lotto_payout_shift1" class="form-control" placeholder="Lotto Payout Shift 1"></td>
-                                    <td><input type="number" name="lotto_payout_shift2" class="form-control" placeholder="Lotto Payout Shift 2"></td>
-                                    <td><input type="number" name="lotto_payout_day" class="form-control" placeholder="Lotto Payout Day" readonly></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="number" name="payout1_shift1" class="form-control" placeholder="Payout 1 Shift 1"></td>
-                                    <td><input type="number" name="payout1_shift2" class="form-control" placeholder="Payout 1 Shift 2"></td>
-                                    <td><input type="number" name="payout1_day" class="form-control" placeholder="Payout 1 Day" readonly></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="number" name="payout2_shift1" class="form-control" placeholder="Payout 2 Shift 1"></td>
-                                    <td><input type="number" name="payout2_shift2" class="form-control" placeholder="Payout 2 Shift 2"></td>
-                                    <td><input type="number" name="payout2_day" class="form-control" placeholder="Payout 2 Day" readonly></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td><input type="number" name="over_short" class="form-control" placeholder="Over Short"></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                <thead>
+                                    <tr>
+                                        <th>Shift 1</th>
+                                        <th>Shift 2</th>
+                                        <th>Day</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Total Sales -->
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.total_sales_shift1(class="form-control form-control-main", placeholder="Total Sales Shift 1") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.total_sales_shift2(class="form-control form-control-main", placeholder="Total Sales Shift 2") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.total_sales_day(class="form-control form-control-main", readonly=True, placeholder="Total Sales Day") }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- Card Total -->
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.card_total_shift1(class="form-control form-control-main", placeholder="Card Total Shift 1") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.card_total_shift2(class="form-control form-control-main", placeholder="Card Total Shift 2") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.card_total_day(class="form-control form-control-main", readonly=True, placeholder="Card Total Day") }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- Drop Total -->
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.drop_total_shift1(class="form-control form-control-main", placeholder="Drop Total Shift 1") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.drop_total_shift2(class="form-control form-control-main", placeholder="Drop Total Shift 2") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.drop_total_day(class="form-control form-control-main", readonly=True, placeholder="Drop Total Day") }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- Lotto Payout -->
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.lotto_payout_shift1(class="form-control form-control-main", placeholder="Lotto Payout Shift 1") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.lotto_payout_shift2(class="form-control form-control-main", placeholder="Lotto Payout Shift 2") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.lotto_payout_day(class="form-control form-control-main", readonly=True, placeholder="Lotto Payout Day") }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- Payout 1 -->
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.payout1_shift1(class="form-control form-control-main", placeholder="Payout 1 Shift 1") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.payout1_shift2(class="form-control form-control-main", placeholder="Payout 1 Shift 2") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.payout1_day(class="form-control form-control-main", readonly=True, placeholder="Payout 1 Day") }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- Payout 2 -->
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.payout2_shift1(class="form-control form-control-main", placeholder="Payout 2 Shift 1") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.payout2_shift2(class="form-control form-control-main", placeholder="Payout 2 Shift 2") }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.payout2_day(class="form-control form-control-main", readonly=True, placeholder="Payout 2 Day") }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- Over Short -->
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{ form.over_short(class="form-control form-control-main", placeholder="Over Short") }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-                   
         </form>
     </div>
+
+    <div class="container mt-5">
+        <h2>Recent Daily Sales</h2>
+        <table class="table table-hover table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Total Sales</th>
+                    <th>Card Total</th>
+                    <th>Drop Total</th>
+                    <th>Lotto Payout</th>
+                    <th>Payout 1</th>
+                    <th>Payout 2</th>
+                    <th>Bonus Achieved</th>
+                    <th>Over/Short</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in recent_daily_sales_entries %}
+                <tr>
+                    <td>{{ entry.date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ entry.total_sales_day }}</td>
+                    <td>{{ entry.card_total_day }}</td>
+                    <td>{{ entry.drop_total_day }}</td>
+                    <td>{{ entry.lotto_payout_day }}</td>
+                    <td>{{ entry.payout1_day }}</td>
+                    <td>{{ entry.payout2_day }}</td>
+                    <td>{{ 'Yes' if entry.bonus_for_day else 'No' }}</td>
+                    <td>{{ entry.over_short }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    
 </body>
 <script src="/static/calculate_dailysales.js"></script>
 

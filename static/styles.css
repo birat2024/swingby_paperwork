@@ -1,154 +1,277 @@
-
-
+/* Base styles for the entire page */
 body, html {
-    height: 100%;
     margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Flex container for sidebar and main content with direction column for sticky footer */
+.main-container {
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
-.container {
-    flex: 1;
+/* Top Bar Styles */
+:root {
+    --sidebar-width:200px; /* Default sidebar width for expanded state */
+    --sidebar-collapsed-width: 80px; /* Sidebar width for collapsed state */
 }
 
-/* Header */
-.navbar.bg-light-green {
-    background-color: rgb(10, 48, 97) !important;
-    height: 60px; /* Set height of the navbar */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-collapsed-width); /* Adjust based on the sidebar state */
+    width: calc(100% - var(--sidebar-collapsed-width)); /* Adjust based on the sidebar state */
+    height: 60px; /* Increased height */
+    z-index: 1040; /* Keep it on top */
+    background-color: teal; /* Matching the sidebar color */
+    color: rgb(19, 176, 19);
+    display: flex;
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space between navigation and logout button */
+    padding: 0 1rem; /* Add some padding on the sides */
+    transition: left 0.3s, width 0.3s; /* Smooth transition for changes */
 }
 
 
-/* Content */
-.content {
-    flex: 1 0 auto;
-    padding-top: 60px; /* Padding to ensure content doesn't overlap fixed navbar */
-    padding-bottom: 60px; /* Add padding at the bottom to avoid overlap with the footer */
+/* Update topbar width when sidebar is not collapsed */
+@media (min-width: 769px) {
+    .topbar {
+        left: var(--sidebar-width); /* Use default sidebar width */
+        width: calc(100% - var(--sidebar-width)); /* Adjust width dynamically */
+    }
 }
 
-/* Footer */
-.footer {
-    background-color: transparent;
-    text-align: center;
-    position: static; /* Change back to static for small screens */
-    width: 100%;
-    height: 60px;
-    line-height: 1.5; /* Adjust the line-height value to reduce spacing between lines */
-    clear: both; /* Clear the float */
-}
 
-/* Adjust padding for smaller screens */
+
+
+/* Hide text on smaller screens or when sidebar is collapsed */
+/* Hide text on smaller screens */
 @media (max-width: 768px) {
-    .navbar {
-        height: 50px;
-    }
-    .content {
-        padding-top: 50px;
-        padding-bottom: 50px; /* Adjust padding at the bottom for small screens */
-    }
-    .footer {
-        position: static;
-        height: auto;
-        line-height: normal;
+    .topbar-text {
+        display: none; /* This hides the text */
     }
 }
 
-
-
-
-
-/* For example, to change the navbar-brand font size */
-.navbar-brand {
-    font-size: 1.5em;
-    /* Other styles */
+/* Assuming you add a 'sidebar-collapsed' class to the body when the sidebar collapses */
+body.sidebar-collapsed .topbar-text {
+    display: none;
 }
 
-/* Aligning search form elements */
-.navbar .form-control {
-    margin-bottom: 0;
+
+
+.topbar .topbar-nav .navbar-item {
+    margin-right: 20px; /* Space between items */
+    color: rgb(19, 176, 19);
+    /* Other styles... */
 }
 
-/* Adjust this as per your requirement */
-.navbar .form-control {
-    margin-bottom: -5px;
-}
-
-/* Adjusting the search bar position */
-.navbar .form-control {
-    margin-bottom: -0px; /* Adjust this value as needed */
+.topbar .topbar-nav .navbar-item:last-child {
+    margin-right: 0; /* No space after the last item */
+    color: rgb(19, 176, 19);
 }
 
 
 
 
 
-  /*Outer box highlight*/
-  
-  .highlight-box {
-    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.6); /* Strong shadow */
+
+/* Sidebar Styles */
+/* Use the CSS variables properly for sidebar width */
+.sidebar {
+    background: darkslategrey;
+    color: whitesmoke;
+    width: var(--sidebar-width); /* Use the CSS variable here */
+    height: 100vh; /* Full viewport height */
+    padding: 1rem 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    z-index: 1020;
+    transition: width 0.3s ease;
+}
+
+
+
+/* When the sidebar is collapsed, its width should be 80px */
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width); /* Use the CSS variable here */
+}
+
+/* Main content should use CSS variable for left margin */
+.main-content {
+    flex-grow: 1;
+    margin-top: 50px; /* Increase or decrease gap from topbar*/
+    margin-left: var(--sidebar-width); /* Use the CSS variable here */
+    padding: 1rem;
+    background-color: #fff;
+    overflow-y: auto;
+    transition: margin-left 0.3s ease;
+    position: relative;
+    z-index: 1010;
+}
+
+/* Adjust the main content margin when sidebar is collapsed */
+.main-content.expanded {
+    margin-left: var(--sidebar-collapsed-width); /* Use the CSS variable here */
+}
+
+/* Navigation link styles */
+.sidebar .nav-link {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    color: navajowhite; /* main sidebar items color*/
+    transition: background-color 0.3s ease;
+
+}
+
+/* Icon and text alignment in sidebar */
+.sidebar .icon {
+    margin-right: 10px;
+    font-size: 22px; 
+}
+
+
+/* Highlight for active/hover state */
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    background-color: #444;
+}
+
+/* Hide text labels in the sidebar when collapsed */
+.sidebar.collapsed .nav-link span {
+    display: none;
+}
+
+/* Dropdown Menu Styles */
+.dropdown-menu {
+    background: #333;
+    border: none;
+    color: navajowhite;
+}
+
+.dropdown-menu .dropdown-item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdown-menu .dropdown-item:hover, .dropdown-menu .dropdown-item:focus {
+    color: navajowhite;
+    background-color: #555;
+}
+
+/* Store Selector Dropdown */
+.dropdown-toggle {
+    width: 100%;
+    background: transparent;
+    color: white;
+    text-align: left;
+}
+
+/* Default state for dropdown items */
+.sidebar .dropdown-menu .dropdown-item {
+    color: navajowhite; /* Change font color to white */
+    /* Additional styling can go here */
+}
+
+/* Hover and focus state for dropdown items */
+.sidebar .dropdown-menu .dropdown-item:hover,
+.sidebar .dropdown-menu .dropdown-item:focus {
+    color: #000; /* Change font color on hover/focus to black or any color of your choice */
+    background-color: #f8f9fa; /* Light background for the dropdown item on hover/focus for contrast */
+}
+
+/* User Info and Logout at the bottom */
+.mt-auto {
+    margin-top: auto;
+}
+
+
+
+/* Adjust sidebar for small screens */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 80px; /* Sidebar is always 80px on small screens */
+        --sidebar-collapsed-width: 80px; /* It stays the same when collapsed */
+    }
+
+    /* The main content should not have a margin-left on small screens */
+    .main-content {
+        margin-left: 0;
+    }}
+
+
+/* Additional styles for forms, tables, and other elements can be added here */
+/* Ensure to avoid duplicating similar styles and consolidate where possible */
+
+
+
+/* Footer with auto top margin and some padding */
+.footer {
+    margin-top: auto; /* Push footer to the bottom */
+    padding: 1rem 0; /* Some vertical padding */
+    color: rgb(3, 3, 39); /* Optional text color */
+    text-align: center;
+
+}
+
+
+ 
+  /* Index scroller */
+
+  .full-width-banner {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    padding-top: 0px;
+    padding-bottom: 10px;
+    box-sizing: border-box;
+    margin: 0 auto; /* Set margin to 0 to override inherited margins */
+}
+
+
+
+/* Login & signup form margin  and Table*/
+
+/* Outer form border */
+.form-border {
+    border: 1px solid blue; /* Black border */
+    border-radius: 15px; /* Curved edges */
+    padding: 20px; /* Add padding for better spacing */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect */
+}
+
+/* Additional form border variations */
+.form-border-main {
+    border-radius: 20px;
     padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    background-color: #fff; /* White background */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
-.form-box {
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.6);
+/* Additional form border variations */
+.form-border-alt {
+    border-radius: 2px;
     padding: 20px;
-    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
-
-
-
-
-body {
-    background-color: #f8f9fa; /* Light grey color */
-}
-
-
-
-/* Daily sles emp table*/
-.form-row {
-    border-bottom: 1px solid #ccc; /* Customize the color as needed */
-    padding-bottom: 10px; /* Adjust padding as needed */
-}
-
-
-/* For purchase order table */
-.custom-table {
-    color: #fff;
-    background-color: #212529; /* Dark background */
-}
-
-.custom-table thead {
-    background-color: #343a40; /* Slightly different shade for the header */
-}
-
-.custom-table tbody tr:hover {
-    background-color: #1d2124; /* Color for hover effect */
-}
-
-/* Login & signup form margin */
+/* Consolidated .form-control properties */
 .form-control {
-    margin-bottom: 10px; /* Space between form fields */
+    border: none;
+    border-bottom: 1px solid #333; /* Darker border color */
+    border-radius: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    margin-bottom: 10px;
+    border-bottom-color: #007bff; /* Color appears on focus */
 }
 
+.form-group {
+    margin-bottom: 1rem;
+}
 
-
-/* Daily Sales Table*/
-
-    .form-control {
-        border: none;
-        border-bottom: 1px solid #ddd;
-        border-radius: 0;
-        box-shadow: none;
-    }
-
-    .form-control:focus {
-        border-bottom-color: #007bff;
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-    }
 
 
 
@@ -199,10 +322,74 @@ input::-webkit-inner-spin-button {
 }
 
 
+/* Base styles for all box containers */
+.box {
+    position: relative;
+    width: 100%;
+    background-color: #f8f9fa; /* Placeholder color, adjust as needed */
+    margin-bottom: 20px; /* Adds space between boxes */
+    overflow: hidden; /* Ensures content does not overflow the div */
+}
 
-  
+/* Aspect ratio classes for maintaining specific ratios */
+.box.aspect-ratio-16-9 {
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+.box.aspect-ratio-4-3 {
+    padding-top: 75%; /* 4:3 Aspect Ratio */
+}
+
+/* Specific styles for image wrappers */
+.image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the entire div */
+}
+
+/* Map-specific styles to ensure it fits into the .box container */
+#map {
+    position: absolute; /* Aligns with the positioning of image-wrapper */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Styles for when there is no image and only a colored box is needed */
+.placeholder-box {
+    padding-top: 20px; /* Top padding for when the box does not maintain aspect ratio */
+    padding-bottom: 20px; /* Bottom padding */
+}
 
 
 
-  
+
+
+.floating-banner {
+    position: absolute;
+    top: 0.5%;  /* Adjust based on your preference */
+    right: 0.5%; /* Adjust to position on the desired side */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    /* Add more styling as per your need */
+}
+
+.floating-banner p {
+    margin: 0; /* Remove default paragraph margins */
+    font-size: 1.2em; /* Adjust font size as needed */
+    /* Add more styling for the text as per your need */
+}
+
+
+
+.floating-banner:hover {
+    background-color: rgba(0, 0, 0, 0.9); /* Darker on hover */
+}
+
+
 
